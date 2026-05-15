@@ -4,67 +4,46 @@ import * as React from "react"
 import { X } from "lucide-react"
 
 // ============================================================
-// ADSTERRA AD CONFIGURATION
+// ADSTERRA AD CONFIGURATION - APPROVED! ✅
+// Website: developertools.space-z.ai
+// Approved: 15 May 2026
 // ============================================================
-// Adsterra is the PRIMARY ad network for this site.
-// 
-// HOW TO GET YOUR ADSTERRA CODES:
-// 1. Go to https://www.adsterra.com/ and sign up (FREE)
-// 2. Add your website in dashboard
-// 3. Create ad placements - you will get ZONE IDs (numbers)
-// 4. Put those zone IDs below in .env.local file
-//
-// .env.local file me yeh likho:
-// NEXT_PUBLIC_AD_NETWORK=adsterra
-// NEXT_PUBLIC_ADSTERRA_BANNER_ID=your_banner_zone_id
-// NEXT_PUBLIC_ADSTERRA_NATIVE_ID=your_native_zone_id
-// NEXT_PUBLIC_ADSTERRA_STICKY_ID=your_sticky_zone_id
-// NEXT_PUBLIC_ADSTERRA_POPUNDER_ID=your_popunder_zone_id
-// NEXT_PUBLIC_ADSTERRA_INTERSTITIAL_ID=your_interstitial_zone_id
+// Zone IDs from Adsterra:
+// Popunder:    29351831
+// Native Banner: 29351832
+// Banner 728x90: 29351833
+// Social Bar:  29351834
+// Smartlink:   29351835
 // ============================================================
 
 type AdNetwork = "none" | "adsterra"
 
 function getAdNetwork(): AdNetwork {
   if (typeof window === "undefined") return "none"
-  return (process.env.NEXT_PUBLIC_AD_NETWORK as AdNetwork) || "none"
+  const env = process.env.NEXT_PUBLIC_AD_NETWORK as AdNetwork
+  return env || "adsterra" // Default to adsterra since we're approved
 }
 
-// Adsterra Zone IDs - Get these from your Adsterra dashboard
-const ADSTERRA_BANNER_ID = process.env.NEXT_PUBLIC_ADSTERRA_BANNER_ID || ""
-const ADSTERRA_NATIVE_ID = process.env.NEXT_PUBLIC_ADSTERRA_NATIVE_ID || ""
-const ADSTERRA_STICKY_ID = process.env.NEXT_PUBLIC_ADSTERRA_STICKY_ID || ""
-const ADSTERRA_POPUNDER_ID = process.env.NEXT_PUBLIC_ADSTERRA_POPUNDER_ID || ""
-const ADSTERRA_INTERSTITIAL_ID = process.env.NEXT_PUBLIC_ADSTERRA_INTERSTITIAL_ID || ""
+// Adsterra Zone IDs - Hardcoded from approval + env fallback
+const ADSTERRA_BANNER_ID = process.env.NEXT_PUBLIC_ADSTERRA_BANNER_ID || "29351833"
+const ADSTERRA_NATIVE_ID = process.env.NEXT_PUBLIC_ADSTERRA_NATIVE_ID || "29351832"
+const ADSTERRA_STICKY_ID = process.env.NEXT_PUBLIC_ADSTERRA_STICKY_ID || "29351834"
+const ADSTERRA_POPUNDER_ID = process.env.NEXT_PUBLIC_ADSTERRA_POPUNDER_ID || "29351831"
+const ADSTERRA_SMARTLINK_ID = process.env.NEXT_PUBLIC_ADSTERRA_INTERSTITIAL_ID || "29351835"
 
 // ============================================================
 // ADSTERRA SCRIPT LOADER
-// Adsterra uses script tags that load from:
+// Adsterra loads ads via script tags:
 // https://www.highperformanceformat.com/{ZONE_ID}/invoke.js
-// Each ad placement gets its own script tag
 // ============================================================
 
-function loadAdsterraBanner(containerId: string, zoneId: string) {
+function loadAdsterraScript(containerId: string, zoneId: string) {
   if (typeof window === "undefined" || !zoneId) return
 
   const container = document.getElementById(containerId)
   if (!container) return
 
-  // Check if already loaded in this container
-  if (container.querySelector("script")) return
-
-  const script = document.createElement("script")
-  script.async = true
-  script.src = `https://www.highperformanceformat.com/${zoneId}/invoke.js`
-  container.appendChild(script)
-}
-
-function loadAdsterraNative(containerId: string, zoneId: string) {
-  if (typeof window === "undefined" || !zoneId) return
-
-  const container = document.getElementById(containerId)
-  if (!container) return
-
+  // Don't load twice in same container
   if (container.querySelector("script")) return
 
   const script = document.createElement("script")
@@ -74,7 +53,8 @@ function loadAdsterraNative(containerId: string, zoneId: string) {
 }
 
 // ============================================================
-// AD BANNER COMPONENT (728x90 Leaderboard / 300x250 Rectangle)
+// AD BANNER COMPONENT (728x90 Leaderboard)
+// Zone ID: 29351833
 // ============================================================
 interface AdBannerProps {
   slot?: string
@@ -86,14 +66,14 @@ interface AdBannerProps {
 export function AdBanner({ slot = "banner", format = "horizontal", className = "", showClose = false }: AdBannerProps) {
   const [closed, setClosed] = React.useState(false)
   const network = getAdNetwork()
-  const containerId = `adsterra-banner-${slot}-${format}`
+  // Unique ID for each ad slot so multiple banners can coexist
+  const containerId = `adsterra-banner-${slot}`
 
   React.useEffect(() => {
     if (network === "adsterra" && ADSTERRA_BANNER_ID) {
-      // Small delay to ensure DOM is ready
       const timer = setTimeout(() => {
-        loadAdsterraBanner(containerId, ADSTERRA_BANNER_ID)
-      }, 100)
+        loadAdsterraScript(containerId, ADSTERRA_BANNER_ID)
+      }, 200)
       return () => clearTimeout(timer)
     }
   }, [network, containerId])
@@ -120,7 +100,7 @@ export function AdBanner({ slot = "banner", format = "horizontal", className = "
           </button>
         )}
         <div className={`${sizeClasses[format]} flex items-center justify-center overflow-hidden`}>
-          {/* Adsterra Banner - Script loads here */}
+          {/* Adsterra Banner 728x90 - Zone: 29351833 */}
           <div id={containerId} className="w-full min-h-[90px]"></div>
         </div>
       </div>
@@ -131,7 +111,8 @@ export function AdBanner({ slot = "banner", format = "horizontal", className = "
 }
 
 // ============================================================
-// STICKY MOBILE AD (Bottom of screen on mobile)
+// SOCIAL BAR / STICKY MOBILE AD
+// Zone ID: 29351834
 // ============================================================
 export function StickyAd() {
   const [closed, setClosed] = React.useState(false)
@@ -155,17 +136,19 @@ export function StickyAd() {
           >
             <X className="h-3 w-3" /> Close
           </button>
-          <div id="adsterra-sticky-mobile"></div>
+          {/* Adsterra Social Bar - Zone: 29351834 */}
+          <div id="adsterra-social-bar"></div>
           <script
             dangerouslySetInnerHTML={{
               __html: `
                 (function(){
-                  var d=document,z="${ADSTERRA_STICKY_ID}";
+                  var c=document.getElementById('adsterra-social-bar');
+                  if(!c)return;
+                  if(c.querySelector('script'))return;
                   var s=document.createElement('script');
-                  s.src='https://www.highperformanceformat.com/'+z+'/invoke.js';
+                  s.src='https://www.highperformanceformat.com/${ADSTERRA_STICKY_ID}/invoke.js';
                   s.async=true;
-                  var c=document.getElementById('adsterra-sticky-mobile');
-                  if(c)c.appendChild(s);
+                  c.appendChild(s);
                 })();
               `,
             }}
@@ -179,7 +162,8 @@ export function StickyAd() {
 }
 
 // ============================================================
-// IN-ARTICLE AD (Native Ad for blog posts)
+// IN-ARTICLE / NATIVE BANNER AD
+// Zone ID: 29351832
 // ============================================================
 interface InArticleAdProps {
   slot?: string
@@ -193,8 +177,8 @@ export function InArticleAd({ slot = "in-article", className = "" }: InArticleAd
   React.useEffect(() => {
     if (network === "adsterra" && ADSTERRA_NATIVE_ID) {
       const timer = setTimeout(() => {
-        loadAdsterraNative(containerId, ADSTERRA_NATIVE_ID)
-      }, 100)
+        loadAdsterraScript(containerId, ADSTERRA_NATIVE_ID)
+      }, 200)
       return () => clearTimeout(timer)
     }
   }, [network, containerId])
@@ -204,6 +188,7 @@ export function InArticleAd({ slot = "in-article", className = "" }: InArticleAd
   if (network === "adsterra" && ADSTERRA_NATIVE_ID) {
     return (
       <div className={`my-8 ${className}`}>
+        {/* Adsterra Native Banner - Zone: 29351832 */}
         <div id={containerId} className="w-full min-h-[250px]"></div>
       </div>
     )
@@ -213,7 +198,8 @@ export function InArticleAd({ slot = "in-article", className = "" }: InArticleAd
 }
 
 // ============================================================
-// SIDEBAR AD (300x600 for blog listing)
+// SIDEBAR AD (300x600)
+// Uses Banner Zone ID: 29351833
 // ============================================================
 interface SidebarAdProps {
   slot?: string
@@ -227,8 +213,8 @@ export function SidebarAd({ slot = "sidebar", className = "" }: SidebarAdProps) 
   React.useEffect(() => {
     if (network === "adsterra" && ADSTERRA_BANNER_ID) {
       const timer = setTimeout(() => {
-        loadAdsterraBanner(containerId, ADSTERRA_BANNER_ID)
-      }, 100)
+        loadAdsterraScript(containerId, ADSTERRA_BANNER_ID)
+      }, 200)
       return () => clearTimeout(timer)
     }
   }, [network, containerId])
@@ -238,6 +224,7 @@ export function SidebarAd({ slot = "sidebar", className = "" }: SidebarAdProps) 
   if (network === "adsterra" && ADSTERRA_BANNER_ID) {
     return (
       <div className={className}>
+        {/* Adsterra Sidebar Banner - Zone: 29351833 */}
         <div id={containerId} className="w-full min-h-[600px]"></div>
       </div>
     )
@@ -247,8 +234,9 @@ export function SidebarAd({ slot = "sidebar", className = "" }: SidebarAdProps) 
 }
 
 // ============================================================
-// POPUNDER AD (Loads once per page session)
-// Popunder = full page ad that appears behind the current tab
+// POPUNDER AD - HIGHEST EARNING! 💰
+// Zone ID: 29351831
+// Loads once per page session
 // ============================================================
 let popunderLoaded = false
 
@@ -274,23 +262,25 @@ export function AdsterraPopunder() {
 }
 
 // ============================================================
-// INTERSTITIAL AD (Full page ad between pages)
+// SMARTLINK AD
+// Zone ID: 29351835
+// Smartlink redirects users to best-converting offers
 // ============================================================
-let interstitialLoaded = false
+let smartlinkLoaded = false
 
-export function AdsterraInterstitial() {
+export function AdsterraSmartlink() {
   const network = getAdNetwork()
 
   React.useEffect(() => {
-    if (network === "adsterra" && ADSTERRA_INTERSTITIAL_ID && !interstitialLoaded) {
-      interstitialLoaded = true
+    if (network === "adsterra" && ADSTERRA_SMARTLINK_ID && !smartlinkLoaded) {
+      smartlinkLoaded = true
       const script = document.createElement("script")
       script.async = true
       script.innerHTML = `
         (function(d,z,s){
           s.src='https://'+d+'/400/'+z;
           try{(document.body||document.documentElement).appendChild(s)}catch(e){}
-        })('www.highperformanceformat.com','${ADSTERRA_INTERSTITIAL_ID}',document.createElement('script'));
+        })('www.highperformanceformat.com','${ADSTERRA_SMARTLINK_ID}',document.createElement('script'));
       `
       document.body.appendChild(script)
     }

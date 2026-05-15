@@ -18,7 +18,7 @@ import { JsonFormatter } from "@/components/tools/json-formatter"
 import { PasswordGenerator } from "@/components/tools/password-generator"
 import { ColorPicker } from "@/components/tools/color-picker"
 import { CssGradientGenerator } from "@/components/tools/css-gradient-generator"
-import { StickyAd, AdsterraPopunder, AdsterraInterstitial } from "@/components/ad-components"
+import { StickyAd, AdsterraPopunder, AdsterraSmartlink } from "@/components/ad-components"
 
 const staticPages: string[] = [
   "home", "tools", "blog", "about", "contact",
@@ -120,12 +120,12 @@ export default function Home() {
         {renderPage()}
       </main>
       <SiteFooter onNavigate={navigate} />
-      {/* Sticky Mobile Ad */}
+      {/* Adsterra Social Bar - Mobile Sticky */}
       <StickyAd />
-      {/* Popunder Ad - appears once per session (high earning) */}
+      {/* Adsterra Popunder - Zone: 29351831 (highest earning!) */}
       <AdsterraPopunder />
-      {/* Interstitial Ad - full page ad */}
-      <AdsterraInterstitial />
+      {/* Adsterra Smartlink - Zone: 29351835 */}
+      <AdsterraSmartlink />
     </div>
   )
 }
