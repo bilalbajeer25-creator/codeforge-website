@@ -16,6 +16,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import type { PageName } from "@/components/site-header"
+import { AdBanner } from "@/components/ad-components"
 
 interface ToolsPageProps {
   onNavigate: (page: PageName) => void
@@ -135,8 +136,8 @@ export function ToolsPage({ onNavigate }: ToolsPageProps) {
         </div>
       )}
 
-      {/* Ad Placeholder */}
-      {/* ADSENSE AD: Tools page - Below tools grid */}
+      {/* Bottom Ad */}
+      <AdBanner format="horizontal" slot="tools-bottom" />
     </div>
   )
 }

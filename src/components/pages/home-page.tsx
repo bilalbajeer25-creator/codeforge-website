@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import type { PageName } from "@/components/site-header"
 import { blogPosts } from "@/lib/blog-data"
+import { AdBanner } from "@/components/ad-components"
 
 interface HomePageProps {
   onNavigate: (page: PageName) => void
@@ -279,8 +280,18 @@ export function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
-      {/* Ad Placeholder */}
-      {/* ADSENSE AD: Home page - Below newsletter section */}
+      {/* After Tools Section Ad */}
+      <div className="container mx-auto px-4 md:px-6">
+        <AdBanner format="horizontal" slot="home-after-tools" />
+      </div>
+
+      {/* After Blog Section Ad */}
+      <AdBanner format="horizontal" slot="home-after-blog" />
+
+      {/* Bottom of Page Ad */}
+      <div className="container mx-auto px-4 md:px-6">
+        <AdBanner format="horizontal" slot="home-bottom" />
+      </div>
     </div>
   )
 }

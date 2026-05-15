@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import type { PageName } from "@/components/site-header"
 import { blogPosts } from "@/lib/blog-data"
+import { AdBanner, SidebarAd } from "@/components/ad-components"
 
 interface BlogPageProps {
   onNavigate: (page: PageName) => void
@@ -167,10 +168,12 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
               </CardContent>
             </Card>
 
-            {/* Ad Placeholder */}
-            {/* ADSENSE AD: Blog sidebar */}
+            {/* Sidebar Ad */}
+            <SidebarAd slot="blog-sidebar" />
           </aside>
         </div>
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="blog-bottom" />
       </div>
     </div>
   )

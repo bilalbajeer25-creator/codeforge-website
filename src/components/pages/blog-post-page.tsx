@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import type { PageName } from "@/components/site-header"
 import { blogPosts } from "@/lib/blog-data"
+import { AdBanner, InArticleAd } from "@/components/ad-components"
 
 interface BlogPostPageProps {
   postId: string
@@ -68,8 +69,8 @@ export function BlogPostPage({ postId, onNavigate }: BlogPostPageProps) {
           </p>
         </header>
 
-        {/* Ad Placeholder */}
-        {/* ADSENSE AD: Blog post - Top of article */}
+        {/* Top Ad */}
+        <AdBanner format="horizontal" slot="post-top" />
 
         {/* Article Content */}
         <article
@@ -88,8 +89,11 @@ export function BlogPostPage({ postId, onNavigate }: BlogPostPageProps) {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* Ad Placeholder */}
-        {/* ADSENSE AD: Blog post - Bottom of article */}
+        {/* In-Article Ad (Middle) */}
+        <InArticleAd slot="post-mid" />
+
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="post-bottom" />
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (

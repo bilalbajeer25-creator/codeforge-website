@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Github, Twitter, Linkedin, Mail, Heart } from "lucide-react"
+import { Github, Twitter, Linkedin, Mail, Heart, Coffee } from "lucide-react"
 import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -170,6 +170,14 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
           <p className="flex items-center gap-1">
             Made with <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500" /> by BILAL
           </p>
+          <a
+            href="https://buymeacoffee.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors"
+          >
+            <Coffee className="h-4 w-4" /> Support CodeForge
+          </a>
         </div>
       </div>
     </footer>
