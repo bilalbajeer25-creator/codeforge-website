@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeForge - Complete Earning & Deployment Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  @page {
+    size: 210mm 297mm;
+    margin: 0;
+  }
+
+  :root {
+    --c-bg: #ffffff;
+    --c-text: #1a1a2e;
+    --c-muted: #64748b;
+    --c-accent: #059669;
+    --c-accent-light: #d1fae5;
+    --c-accent-dark: #047857;
+    --c-card-bg: #f8fafc;
+    --c-border: #e2e8f0;
+    --c-code-bg: #1e293b;
+    --c-code-text: #e2e8f0;
+    --c-warning-bg: #fef3c7;
+    --c-warning-border: #f59e0b;
+    --c-success-bg: #d1fae5;
+    --c-success-border: #10b981;
+    --c-info-bg: #dbeafe;
+    --c-info-border: #3b82f6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--c-bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--c-text);
+    line-height: 1.7;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 25mm 22mm;
+    background: var(--c-bg);
+    position: relative;
+    page-break-after: always;
+  }
+
+  .page:last-child { page-break-after: avoid; }
+
+  /* ---- COVER PAGE ---- */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+    color: #ffffff;
+    padding: 40mm 30mm;
+  }
+
+  .cover-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+
+  .cover-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    opacity: 0.9;
+    margin-bottom: 50px;
+    letter-spacing: 2px;
+  }
+
+  .cover-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 20px;
+  }
+
+  .cover-desc {
+    font-size: 16px;
+    font-weight: 300;
+    opacity: 0.85;
+    max-width: 500px;
+    line-height: 1.8;
+    margin-bottom: 60px;
+  }
+
+  .cover-meta {
+    font-size: 13px;
+    opacity: 0.7;
+    letter-spacing: 1px;
+  }
+
+  .cover-line {
+    width: 80px;
+    height: 3px;
+    background: rgba(255,255,255,0.5);
+    margin: 30px auto;
+    border-radius: 2px;
+  }
+
+  /* ---- HEADINGS ---- */
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--c-text);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+    border-bottom: 3px solid var(--c-accent);
+    padding-bottom: 10px;
+    display: inline-block;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--c-text);
+    margin-top: 30px;
+    margin-bottom: 14px;
+    padding-left: 14px;
+    border-left: 4px solid var(--c-accent);
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--c-text);
+    margin-top: 22px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--c-text);
+    margin-bottom: 12px;
+  }
+
+  /* ---- TABLE OF CONTENTS ---- */
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+
+  .toc-number {
+    font-weight: 700;
+    color: var(--c-accent);
+    min-width: 36px;
+  }
+
+  .toc-text {
+    color: var(--c-text);
+    flex: 1;
+  }
+
+  .toc-sub {
+    padding-left: 36px;
+    font-size: 13px;
+    color: var(--c-muted);
+  }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--c-card-bg);
+    border: 1px solid var(--c-border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--c-accent);
+    margin-bottom: 8px;
+  }
+
+  .card p { font-size: 13.5px; margin-bottom: 6px; }
+
+  /* ---- CALLOUT BOXES ---- */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+
+  .callout-warning {
+    background: var(--c-warning-bg);
+    border-left: 4px solid var(--c-warning-border);
+  }
+
+  .callout-success {
+    background: var(--c-success-bg);
+    border-left: 4px solid var(--c-success-border);
+  }
+
+  .callout-info {
+    background: var(--c-info-bg);
+    border-left: 4px solid var(--c-info-border);
+  }
+
+  .callout strong { font-weight: 700; }
+
+  /* ---- STEP BOXES ---- */
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 18px;
+    align-items: flex-start;
+  }
+
+  .step-number {
+    background: var(--c-accent);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-content { flex: 1; }
+  .step-content h3 { margin-top: 0; margin-bottom: 4px; }
+  .step-content p { font-size: 13.5px; }
+
+  /* ---- CODE ---- */
+  pre {
+    background: var(--c-code-bg);
+    color: var(--c-code-text);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 10px 0 14px 0;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: var(--c-card-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--c-accent-dark);
+  }
+
+  /* ---- LISTS ---- */
+  ul, ol {
+    margin: 8px 0 14px 20px;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  li { margin-bottom: 4px; }
+
+  /* ---- TABLES ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 16px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background: var(--c-accent);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  tr:nth-child(even) td { background: var(--c-card-bg); }
+
+  /* ---- MISC ---- */
+  .badge {
+    display: inline-block;
+    background: var(--c-accent-light);
+    color: var(--c-accent-dark);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--c-border);
+    margin: 24px 0;
+  }
+
+  .highlight {
+    background: linear-gradient(120deg, var(--c-accent-light) 0%, var(--c-accent-light) 100%);
+    padding: 0 4px;
+    border-radius: 3px;
+  }
+
+  .earning-table td:first-child { font-weight: 600; }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-box {
+    background: var(--c-card-bg);
+    border: 2px solid var(--c-accent);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .flow-arrow {
+    color: var(--c-accent);
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- COVER PAGE -->
+<!-- ============================================ -->
+<div class="page cover">
+  <div class="cover-logo">&lt;CF/&gt;</div>
+  <div class="cover-subtitle">CODEFORGE</div>
+  <div class="cover-line"></div>
+  <div class="cover-title">Complete Earning &<br>Deployment Guide</div>
+  <div class="cover-desc">
+    Step-by-step guide to monetize your website with ads, deploy on Vercel for free, and start earning real money. Zero budget required.
+  </div>
+  <div class="cover-line"></div>
+  <div class="cover-meta">
+    FOR BILAL &bull; MAY 2025 &bull; ZERO BUDGET STRATEGY
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>Table of Contents</h1>
+  <br>
+  <div class="toc-item"><span class="toc-number">01</span><span class="toc-text">How Ezoic Earning Works (Complete Process)</span></div>
+  <div class="toc-item toc-sub">What is CPM / RPM / EPMV</div>
+  <div class="toc-item toc-sub">How much money can you earn</div>
+  <div class="toc-item toc-sub">Ezoic vs AdSense comparison</div>
+
+  <div class="toc-item"><span class="toc-number">02</span><span class="toc-text">Ad Network Signup Process (Step by Step)</span></div>
+  <div class="toc-item toc-sub">Ezoic signup and approval</div>
+  <div class="toc-item toc-sub">Adsterra signup (fastest)</div>
+  <div class="toc-item toc-sub">Media.net signup</div>
+
+  <div class="toc-item"><span class="toc-number">03</span><span class="toc-text">Ad Code Setup in CodeForge</span></div>
+  <div class="toc-item toc-sub">Environment variables configuration</div>
+  <div class="toc-item toc-sub">Ad placement locations in website</div>
+  <div class="toc-item toc-sub">Switching between ad networks</div>
+
+  <div class="toc-item"><span class="toc-number">04</span><span class="toc-text">Deploy on Vercel (Free Hosting)</span></div>
+  <div class="toc-item toc-sub">Create GitHub account and upload code</div>
+  <div class="toc-item toc-sub">Connect Vercel to GitHub</div>
+  <div class="toc-item toc-sub">Custom domain setup (optional)</div>
+  <div class="toc-item toc-sub">Environment variables on Vercel</div>
+
+  <div class="toc-item"><span class="toc-number">05</span><span class="toc-text">Traffic Strategy (Free Methods)</span></div>
+  <div class="toc-item toc-sub">SEO optimization for tools</div>
+  <div class="toc-item toc-sub">Social media sharing plan</div>
+  <div class="toc-item toc-sub">YouTube Shorts strategy</div>
+  <div class="toc-item toc-sub">Quora and Reddit marketing</div>
+
+  <div class="toc-item"><span class="toc-number">06</span><span class="toc-text">Earning Calculator & Timeline</span></div>
+  <div class="toc-item toc-sub">Month-by-month earning projections</div>
+  <div class="toc-item toc-sub">When will you get first payment</div>
+
+  <div class="toc-item"><span class="toc-number">07</span><span class="toc-text">Important Tips & Warnings</span></div>
+  <div class="toc-item toc-sub">Things never to do with ads</div>
+  <div class="toc-item toc-sub">How to avoid getting banned</div>
+
+  <br>
+  <div class="callout callout-info">
+    <strong>Quick Summary:</strong> This guide covers everything from how ad networks pay you, to signing up, adding ad code, deploying the website, getting traffic, and receiving your first payment. Follow each step in order.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 1: HOW EZOIC EARNING WORKS -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>01 - How Ezoic Earning Works</h1>
+
+  <h2>Basic Concept: How Websites Earn from Ads</h2>
+  <p>
+    When someone visits your website, ads are shown on the page. Advertisers pay money to show their ads to your visitors. The ad network (like Ezoic) takes a small commission and gives you the rest. This is how every ad-supported website earns money - from blogs to YouTube to news sites.
+  </p>
+
+  <div class="flow-diagram">
+    <div class="flow-box">Visitor comes<br>to your site</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-box">Ad is shown<br>on the page</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-box">Advertiser pays<br>ad network</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-box">Ad network pays<br>YOU (90%)</div>
+  </div>
+
+  <h2>Key Terms You Must Know</h2>
+
+  <div class="card">
+    <div class="card-title">CPM (Cost Per Mille / Cost Per 1000 Impressions)</div>
+    <p>
+      This is how much an advertiser pays for 1000 ad views. If CPM is $5, it means for every 1000 times the ad is shown, the advertiser pays $5. Developer/tech content typically has CPM between $3 to $15, which is higher than entertainment or gaming content.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">RPM (Revenue Per 1000 Pageviews)</div>
+    <p>
+      This is how much YOU earn per 1000 page views. RPM is usually higher than CPM because each page has multiple ad slots. If your page has 4 ads and each has $3 CPM, your RPM could be around $8-$12 after the ad network's commission.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">EPMV (Earnings Per Thousand Visitors) - Ezoic's Metric</div>
+    <p>
+      Ezoic uses EPMV instead of RPM because it measures earnings per visitor, not per pageview. This is more accurate because one visitor might view 3 pages. If EPMV is $10 and you get 1000 visitors, you earn $10. Ezoic's EPMV for tech sites is typically $8-$25.
+    </p>
+  </div>
+
+  <h2>How Much Money Can You Earn?</h2>
+  <p>Here is a realistic earning estimate for CodeForge (developer tools + blog website):</p>
+
+  <table class="earning-table">
+    <tr>
+      <th>Monthly Visitors</th>
+      <th>Page Views (avg 2.5 pages/visit)</th>
+      <th>EPMV (estimated)</th>
+      <th>Monthly Earning</th>
+    </tr>
+    <tr>
+      <td>1,000</td>
+      <td>2,500</td>
+      <td>$8</td>
+      <td>$8</td>
+    </tr>
+    <tr>
+      <td>5,000</td>
+      <td>12,500</td>
+      <td>$10</td>
+      <td>$50</td>
+    </tr>
+    <tr>
+      <td>10,000</td>
+      <td>25,000</td>
+      <td>$12</td>
+      <td>$120</td>
+    </tr>
+    <tr>
+      <td>25,000</td>
+      <td>62,500</td>
+      <td>$14</td>
+      <td>$350</td>
+    </tr>
+    <tr>
+      <td>50,000</td>
+      <td>125,000</td>
+      <td>$16</td>
+      <td>$800</td>
+    </tr>
+    <tr>
+      <td>100,000</td>
+      <td>250,000</td>
+      <td>$18</td>
+      <td>$1,800</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-warning">
+    <strong>Important:</strong> These are realistic estimates, not guarantees. Actual earnings depend on your traffic source, geographic location of visitors (US/UK traffic pays more), content quality, and ad placement. Pakistani traffic pays less than US traffic, but developer content attracts global visitors which pays better.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 1 CONTINUED -->
+<!-- ============================================ -->
+<div class="page">
+  <h2>Ezoic vs AdSense Comparison</h2>
+
+  <table>
+    <tr>
+      <th>Feature</th>
+      <th>Ezoic</th>
+      <th>Google AdSense</th>
+    </tr>
+    <tr>
+      <td>Approval Time</td>
+      <td>1-3 days</td>
+      <td>2-6 weeks</td>
+    </tr>
+    <tr>
+      <td>Minimum Traffic Required</td>
+      <td>None (0 visitors OK)</td>
+      <td>Not specified but needs active site</td>
+    </tr>
+    <tr>
+      <td>Minimum Payout</td>
+      <td>$20</td>
+      <td>$100</td>
+    </tr>
+    <tr>
+      <td>Payment Method</td>
+      <td>PayPal, Payoneer, Wire</td>
+      <td>Wire, EFT, Check</td>
+    </tr>
+    <tr>
+      <td>Earnings (Tech sites)</td>
+      <td>50-200% more than AdSense</td>
+      <td>Baseline</td>
+    </tr>
+    <tr>
+      <td>AI Optimization</td>
+      <td>Yes (auto ad placement)</td>
+      <td>No (manual placement)</td>
+    </tr>
+    <tr>
+      <td>Ad Quality</td>
+      <td>Premium advertisers</td>
+      <td>Mixed quality</td>
+    </tr>
+    <tr>
+      <td>Best For</td>
+      <td>New sites wanting fast monetization</td>
+      <td>Established sites with 10K+ traffic</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-success">
+    <strong>Why Ezoic is best for you:</strong> Ezoic approves in 1-3 days, has no minimum traffic requirement, pays more than AdSense for tech content, and has a low $20 minimum payout. You can start earning within your first week!
+  </div>
+
+  <h2>How Ezoic Pays You - The Complete Flow</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h3>Sign Up on Ezoic</h3>
+      <p>Create account at ezoic.com. No traffic requirement. You need a live website with some content (which CodeForge already has - 7 blog posts + 6 tools + all legal pages).</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h3>Ezoic Reviews Your Site (1-3 Days)</h3>
+      <p>Ezoic team checks your site for content quality, policy pages (Privacy, Terms, Disclaimer - which you already have), and original content. They approve most developer tool sites quickly.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <h3>Connect Your Site</h3>
+      <p>Ezoic gives you integration options: NameServer integration (easiest) or WordPress plugin. For Next.js on Vercel, you will use their JavaScript integration or Cloudflare integration.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <h3>Ads Start Showing</h3>
+      <p>Once connected, Ezoic automatically places ads on your site. Their AI tests different ad positions, sizes, and types to find what earns the most. This optimization takes 2-4 weeks to reach full potential.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">5</div>
+    <div class="step-content">
+      <h3>Earnings Accumulate</h3>
+      <p>Every visitor who sees ads generates revenue. Ezoic tracks everything in their dashboard. You can see real-time earnings, traffic data, and EPMV metrics.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">6</div>
+    <div class="step-content">
+      <h3>Get Paid (Monthly)</h3>
+      <p>Ezoic pays monthly, net 30 days. January earnings are paid by end of February. Minimum payout is $20. Payment via PayPal (easiest for Pakistan) or Payoneer or wire transfer.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>PayPal in Pakistan:</strong> Pakistan does not officially support PayPal receiving. Use Payoneer instead - it works perfectly in Pakistan and can withdraw to your local bank account (JazzCash, EasyPaisa, or any bank). Sign up at payoneer.com for free.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 2: AD NETWORK SIGNUP -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>02 - Ad Network Signup Process</h1>
+
+  <h2>Recommended Strategy: Start with Adsterra, Upgrade to Ezoic</h2>
+
+  <div class="callout callout-success">
+    <strong>Best Plan:</strong> Apply to Adsterra first (instant approval) to start earning immediately. Then apply to Ezoic simultaneously. Once Ezoic approves, switch to Ezoic for higher earnings. You can also apply to Media.net as a backup.
+  </div>
+
+  <h2>A. Adsterra Signup (Fastest - Instant Approval)</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h3>Go to adsterra.com</h3>
+      <p>Visit <code>https://www.adsterra.com</code> and click "Sign Up" or "Start Earning". Select "Publisher" account type (you are a website owner showing ads, not an advertiser).</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h3>Fill in Your Details</h3>
+      <p>Enter your name, email, and website URL (your Vercel domain like codeforge.vercel.app). Select payment method (choose Payoneer or Wire Transfer). Adsterra accepts Pakistani publishers.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <h3>Get Your Zone IDs (Instant)</h3>
+      <p>After signup, go to Dashboard &gt; Add Website &gt; Create Ad Zone. Create these zones:<br>
+      - Banner 728x90 (for horizontal ads) &rarr; Copy the Zone ID<br>
+      - Native Ad (for in-article ads) &rarr; Copy the Zone ID<br>
+      - Social Bar / Sticky (for mobile) &rarr; Copy the Zone ID</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <h3>Put Zone IDs in .env.local</h3>
+      <p>Add your Zone IDs to the environment variables (explained in Section 03). Your ads will start showing within minutes!</p>
+    </div>
+  </div>
+
+  <h2>B. Ezoic Signup (Highest Earning)</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h3>Go to ezoic.com</h3>
+      <p>Visit <code>https://www.ezoic.com</code> and click "Get Started". Ezoic offers a free tier called "Access Now" that has no minimum traffic requirement.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h3>Enter Your Website URL</h3>
+      <p>Enter your deployed website URL (e.g., codeforge.vercel.app). Ezoic will scan your site for compliance - policy pages, original content, no prohibited content.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <h3>Wait for Approval (1-3 Days)</h3>
+      <p>Ezoic reviews your site. CodeForge has everything they need: original blog posts, working tools, Privacy Policy, Terms & Conditions, Disclaimer, About page. Approval rate is very high for developer sites.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <h3>Get Your Ezoic Site ID</h3>
+      <p>After approval, go to Ezoic Dashboard &gt; Settings. You will find your Site ID. Copy this and add it to your <code>.env.local</code> file as <code>NEXT_PUBLIC_EZOIC_SITE_ID</code>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">5</div>
+    <div class="step-content">
+      <h3>Choose Integration Method</h3>
+      <p>For Next.js on Vercel, choose "Cloudflare Integration" or "DNS Integration". Ezoic will walk you through connecting your domain. If using <code>.vercel.app</code> domain, use Ezoic's JavaScript tag integration instead.</p>
+    </div>
+  </div>
+
+  <h2>C. Media.net Signup (Backup Option)</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h3>Go to media.net</h3>
+      <p>Visit <code>https://www.media.net</code> and apply. Media.net is Yahoo! and Bing's ad network. They prefer sites with some traffic (even 500 visitors/month is enough). Approval takes 2-5 days.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h3>Get Your CID</h3>
+      <p>After approval, you get a CID (Customer ID) from the dashboard. Add it to <code>.env.local</code> as <code>NEXT_PUBLIC_MEDIANET_CID</code>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 3: AD CODE SETUP -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>03 - Ad Code Setup in CodeForge</h1>
+
+  <h2>Environment Variables Configuration</h2>
+  <p>
+    CodeForge already has ad components built in. You only need to configure which ad network to use by setting environment variables. This is done without changing any code.
+  </p>
+
+  <h3>Step 1: Create .env.local file</h3>
+  <p>In your project root folder, create a file named <code>.env.local</code>:</p>
+
+  <pre># Which ad network to use: "adsterra" or "ezoic" or "medianet" or "none"
+NEXT_PUBLIC_AD_NETWORK=adsterra
+
+# ---- ADSTERRA (Start with this) ----
+NEXT_PUBLIC_ADSTERRA_BANNER_ID=your_banner_zone_id_here
+NEXT_PUBLIC_ADSTERRA_NATIVE_ID=your_native_zone_id_here
+NEXT_PUBLIC_ADSTERRA_STICKY_ID=your_sticky_zone_id_here
+
+# ---- EZOIC (Upgrade to this later) ----
+NEXT_PUBLIC_EZOIC_SITE_ID=your_ezoic_site_id_here
+
+# ---- MEDIA.NET (Backup option) ----
+NEXT_PUBLIC_MEDIANET_CID=your_medianet_cid_here</pre>
+
+  <h3>Step 2: Replace with your real IDs</h3>
+  <p>After signing up on Adsterra/Ezoic, replace the placeholder values with your actual IDs. For example, if Adsterra gives you Banner Zone ID <code>1234567</code>, set:</p>
+  <pre>NEXT_PUBLIC_ADSTERRA_BANNER_ID=1234567</pre>
+
+  <h3>Step 3: Restart the development server</h3>
+  <p>Environment variables only take effect after restarting the server. Stop the current server and run again:</p>
+  <pre>npm run dev</pre>
+
+  <h2>Ad Placement Locations in CodeForge</h2>
+  <p>Your website already has 10 strategic ad placements. Here's where they are:</p>
+
+  <table>
+    <tr>
+      <th>Location</th>
+      <th>Page</th>
+      <th>Ad Type</th>
+      <th>Performance</th>
+    </tr>
+    <tr>
+      <td>After Tools Section</td>
+      <td>Home Page</td>
+      <td>Horizontal Banner</td>
+      <td>High</td>
+    </tr>
+    <tr>
+      <td>After Blog Section</td>
+      <td>Home Page</td>
+      <td>Horizontal Banner</td>
+      <td>High</td>
+    </tr>
+    <tr>
+      <td>Bottom of Home</td>
+      <td>Home Page</td>
+      <td>Horizontal Banner</td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Top of Blog Post</td>
+      <td>Blog Post</td>
+      <td>Horizontal Banner</td>
+      <td>Very High</td>
+    </tr>
+    <tr>
+      <td>Middle of Blog Post</td>
+      <td>Blog Post</td>
+      <td>In-Article Ad</td>
+      <td>Highest Earning</td>
+    </tr>
+    <tr>
+      <td>Bottom of Blog Post</td>
+      <td>Blog Post</td>
+      <td>Horizontal Banner</td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Blog Sidebar</td>
+      <td>Blog Listing</td>
+      <td>Sidebar Ad</td>
+      <td>High</td>
+    </tr>
+    <tr>
+      <td>Bottom of Blog Listing</td>
+      <td>Blog Listing</td>
+      <td>Horizontal Banner</td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Bottom of Tools Page</td>
+      <td>Tools Page</td>
+      <td>Horizontal Banner</td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Mobile Sticky Bottom</td>
+      <td>All Pages (Mobile)</td>
+      <td>Sticky Banner</td>
+      <td>Very High</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-info">
+    <strong>Best earning placements:</strong> In-article ads (middle of blog posts) and mobile sticky ads are the highest earners. Blog posts attract readers who spend more time on page, which means more ad revenue.
+  </div>
+
+  <h2>Switching Between Ad Networks</h2>
+  <p>To switch from Adsterra to Ezoic, simply change the environment variable:</p>
+  <pre># Change from Adsterra to Ezoic
+NEXT_PUBLIC_AD_NETWORK=ezoic</pre>
+  <p>That's it! The ad components will automatically switch to Ezoic code. No other code changes needed.</p>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 4: DEPLOY ON VERCEL -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>04 - Deploy on Vercel (Free Hosting)</h1>
+
+  <h2>Complete Deployment Steps</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h3>Install Git</h3>
+      <p>Download and install Git from <code>https://git-scm.com</code>. After installation, open terminal and set your identity:</p>
+      <pre>git config --global user.name "BILAL"
+git config --global user.email "your-email@gmail.com"</pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h3>Create GitHub Account</h3>
+      <p>Go to <code>https://github.com</code> and create a free account. Use the same email you used in Git config. Verify your email address.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <h3>Upload Code to GitHub</h3>
+      <p>Open terminal in your project folder and run these commands:</p>
+      <pre>cd /path/to/your/codeforge-project
+
+# Initialize git repository
+git init
+
+# Add all files
+git add .
+
+# Create first commit
+git commit -m "Initial commit - CodeForge website"
+
+# Create GitHub repository first at github.com/new
+# Then connect and push:
+git remote add origin https://github.com/YOUR-USERNAME/codeforge.git
+git branch -M main
+git push -u origin main</pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <h3>Sign Up on Vercel (Free)</h3>
+      <p>Go to <code>https://vercel.com</code> and click "Sign Up". Choose "Continue with GitHub" to connect your GitHub account. This is 100% free - no credit card needed.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">5</div>
+    <div class="step-content">
+      <h3>Import Your Project</h3>
+      <p>On Vercel dashboard, click "Add New" &gt; "Project". Select your <code>codeforge</code> repository from the list. Vercel will auto-detect Next.js framework. Click "Deploy" - that's it! Your site will be live in 2-3 minutes.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">6</div>
+    <div class="step-content">
+      <h3>Get Your Live URL</h3>
+      <p>Vercel gives you a free URL like <code>codeforge.vercel.app</code> or <code>codeforge-xyz123.vercel.app</code>. This is your live website! Anyone in the world can visit it now.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">7</div>
+    <div class="step-content">
+      <h3>Add Environment Variables on Vercel</h3>
+      <p>Go to your project on Vercel &gt; Settings &gt; Environment Variables. Add all the variables from your <code>.env.local</code> file:</p>
+      <pre>NEXT_PUBLIC_AD_NETWORK = adsterra
+NEXT_PUBLIC_ADSTERRA_BANNER_ID = your_zone_id
+NEXT_PUBLIC_ADSTERRA_NATIVE_ID = your_zone_id
+NEXT_PUBLIC_ADSTERRA_STICKY_ID = your_zone_id</pre>
+      <p>After adding, click "Redeploy" for changes to take effect.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">8</div>
+    <div class="step-content">
+      <h3>Custom Domain (Optional - Free with Freenom or Cheap with Namecheap)</h3>
+      <p>For a professional look, connect a custom domain like <code>codeforge.dev</code> or <code>codeforge.tools</code>. On Vercel: Settings &gt; Domains &gt; Add. You can buy cheap domains from Namecheap ($1-3/year for .xyz, .site domains). Free .tk/.ml domains were discontinued, so a cheap domain is the best option.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-success">
+    <strong>Every time you update code:</strong> Just push to GitHub with <code>git add . && git commit -m "update" && git push</code>. Vercel automatically rebuilds and deploys your site within 1-2 minutes!
+  </div>
+
+  <h2>How to Update the Website</h2>
+  <p>Whenever you want to make changes (new blog post, new tool, etc.):</p>
+  <pre># 1. Make your changes in the code
+# 2. Save files
+# 3. Push to GitHub:
+git add .
+git commit -m "Added new blog post"
+git push</pre>
+  <p>Vercel automatically detects the changes and redeploys your site. No manual deployment needed!</p>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 5: TRAFFIC STRATEGY -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>05 - Traffic Strategy (Free Methods)</h1>
+
+  <h2>Why Traffic = Money</h2>
+  <p>
+    More visitors means more ad views, which means more earnings. If you get 1000 visitors/month with $10 EPMV, you earn $10/month. If you get 10,000 visitors, you earn $100/month. The key is to get traffic without spending money. Here are proven free methods.
+  </p>
+
+  <h2>Method 1: SEO - Search Engine Optimization (Best Long-Term)</h2>
+  <p>
+    Your developer tools are your biggest SEO advantage. People search Google for "image compressor online", "json formatter", "password generator" thousands of times daily. Each tool page can rank on Google and bring daily visitors automatically.
+  </p>
+
+  <div class="card">
+    <div class="card-title">SEO Keywords Your Tools Target</div>
+    <p><strong>Image Compressor:</strong> "compress image online", "reduce image size", "image compressor free" - 50K+ monthly searches</p>
+    <p><strong>JSON Formatter:</strong> "json formatter", "json beautifier", "json validator" - 100K+ monthly searches</p>
+    <p><strong>Password Generator:</strong> "password generator", "secure password", "random password" - 200K+ monthly searches</p>
+    <p><strong>Word Counter:</strong> "word counter", "character counter online" - 80K+ monthly searches</p>
+    <p><strong>Color Picker:</strong> "color picker", "hex to rgb converter" - 60K+ monthly searches</p>
+    <p><strong>CSS Gradient Generator:</strong> "css gradient generator", "gradient maker" - 30K+ monthly searches</p>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>SEO Timeline:</strong> Google takes 3-6 months to start ranking new sites. Be patient! Write more blog posts (2-3 per week) to speed this up. Each blog post is another page that can rank on Google.
+  </div>
+
+  <h2>Method 2: Social Media (Fastest Initial Traffic)</h2>
+
+  <table>
+    <tr>
+      <th>Platform</th>
+      <th>What to Post</th>
+      <th>How Often</th>
+      <th>Expected Traffic</th>
+    </tr>
+    <tr>
+      <td>Facebook Groups</td>
+      <td>Share tools in web dev groups</td>
+      <td>Daily</td>
+      <td>20-50 visits/day</td>
+    </tr>
+    <tr>
+      <td>Twitter/X</td>
+      <td>Tips + tool links</td>
+      <td>2-3 times/day</td>
+      <td>10-30 visits/day</td>
+    </tr>
+    <tr>
+      <td>Reddit</td>
+      <td>Helpful answers + tool links</td>
+      <td>2-3 times/week</td>
+      <td>50-200 visits/post</td>
+    </tr>
+    <tr>
+      <td>Pinterest</td>
+      <td>Code snippets as images</td>
+      <td>3-5 pins/day</td>
+      <td>20-50 visits/day</td>
+    </tr>
+    <tr>
+      <td>LinkedIn</td>
+      <td>Developer articles</td>
+      <td>2-3 times/week</td>
+      <td>10-30 visits/day</td>
+    </tr>
+  </table>
+
+  <h2>Method 3: YouTube Shorts (Viral Potential)</h2>
+  <p>
+    Create 30-60 second Shorts showing your tools in action. For example: "Generate a secure password in 5 seconds" showing your Password Generator. Link to your website in the description and comments. YouTube Shorts can go viral and bring hundreds of visitors from a single video.
+  </p>
+
+  <h2>Method 4: Quora & Stack Overflow</h2>
+  <p>
+    Answer questions on Quora about web development topics. When someone asks "How to format JSON data?", answer with helpful content and mention your JSON Formatter tool as a bonus. This brings highly targeted traffic that stays longer (which means more ad revenue).
+  </p>
+
+  <h2>Daily 30-Minute Traffic Plan</h2>
+  <div class="card">
+    <div class="card-title">Morning (10 minutes)</div>
+    <p>Share one tool on 2-3 Facebook developer groups. Post a tip on Twitter with a link to your blog.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Afternoon (10 minutes)</div>
+    <p>Answer 1-2 questions on Quora with a link to your tools. Pin a code snippet on Pinterest.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Evening (10 minutes)</div>
+    <p>Share on Reddit (webdev, javascript subreddits). Engage with comments on your posts.</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 6: EARNING CALCULATOR -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>06 - Earning Calculator & Timeline</h1>
+
+  <h2>Month-by-Month Projection</h2>
+
+  <table>
+    <tr>
+      <th>Month</th>
+      <th>What You Do</th>
+      <th>Expected Traffic</th>
+      <th>Expected Earning</th>
+    </tr>
+    <tr>
+      <td>Month 1</td>
+      <td>Deploy site, apply for Adsterra, share on social media daily</td>
+      <td>200-500 visitors</td>
+      <td>$2-5</td>
+    </tr>
+    <tr>
+      <td>Month 2</td>
+      <td>Apply to Ezoic, write 4 more blog posts, continue social sharing</td>
+      <td>500-1,500 visitors</td>
+      <td>$5-15</td>
+    </tr>
+    <tr>
+      <td>Month 3</td>
+      <td>Switch to Ezoic, SEO starts working, write more blog posts</td>
+      <td>1,500-3,000 visitors</td>
+      <td>$15-30</td>
+    </tr>
+    <tr>
+      <td>Month 4</td>
+      <td>Ezoic optimization kicks in, tools rank on Google</td>
+      <td>3,000-5,000 visitors</td>
+      <td>$30-50</td>
+    </tr>
+    <tr>
+      <td>Month 5</td>
+      <td>More blog posts, YouTube Shorts, Pinterest traffic</td>
+      <td>5,000-8,000 visitors</td>
+      <td>$50-80</td>
+    </tr>
+    <tr>
+      <td>Month 6</td>
+      <td>SEO ranking improves, consistent traffic from Google</td>
+      <td>8,000-15,000 visitors</td>
+      <td>$80-150</td>
+    </tr>
+    <tr>
+      <td>Month 9</td>
+      <td>Multiple tools ranking, blog getting organic traffic</td>
+      <td>20,000-40,000 visitors</td>
+      <td>$200-500</td>
+    </tr>
+    <tr>
+      <td>Month 12</td>
+      <td>Established authority site, passive income</td>
+      <td>40,000-80,000 visitors</td>
+      <td>$400-1,000+</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-warning">
+    <strong>Realistic Expectations:</strong> First 2-3 months earnings will be very small ($2-15/month). This is normal! Every successful website starts this way. The key is to keep posting content and sharing. After 6 months, if you consistently post 2-3 blog posts per week and share daily, you should be earning $80-150/month. After 12 months with consistent effort, $500-1000/month is achievable.
+  </div>
+
+  <h2>When Will You Get Your First Payment?</h2>
+
+  <div class="card">
+    <div class="card-title">Adsterra Payment</div>
+    <p>Minimum payout: $5 (Net 15 days). If you earn $5 in January, you get paid by February 15th. Payment via Payoneer, Wire, or Crypto (USDT). <strong>Fastest to first payment!</strong></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ezoic Payment</div>
+    <p>Minimum payout: $20 (Net 30 days). If you earn $20 in January, you get paid by end of February. Payment via PayPal or Payoneer. <strong>Higher earnings per visitor.</strong></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Media.net Payment</div>
+    <p>Minimum payout: $100 (Net 30 days). Higher threshold but good for backup. Payment via Wire Transfer.</p>
+  </div>
+
+  <h2>How to Receive Payment in Pakistan</h2>
+
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h3>Sign Up for Payoneer (Free)</h3>
+      <p>Go to <code>https://www.payoneer.com</code> and create a free account. Payoneer gives you a virtual US bank account that can receive payments from ad networks. Upload your CNIC for verification.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h3>Link Payoneer to Ad Network</h3>
+      <p>In Ezoic/Adsterra dashboard, go to Payment Settings and select Payoneer. Enter your Payoneer account details. This only needs to be done once.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <h3>Withdraw to Pakistani Bank</h3>
+      <p>Payoneer lets you withdraw to any Pakistani bank account (HBL, UBL, Meezan, etc.) or JazzCash/EasyPaisa. Conversion rate is competitive. Money arrives in 1-3 business days.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 7: IMPORTANT TIPS & WARNINGS -->
+<!-- ============================================ -->
+<div class="page">
+  <h1>07 - Important Tips & Warnings</h1>
+
+  <h2>NEVER Do These Things (Will Get You Banned)</h2>
+
+  <div class="callout callout-warning">
+    <strong>1. Never click your own ads!</strong> This is the #1 reason accounts get banned. Ad networks have sophisticated click-fraud detection. Even one self-click can flag your account. Tell friends and family NOT to click ads either - ad networks detect this easily.
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>2. Never ask others to click ads!</strong> Writing "Please click on ads to support us" or "Support by clicking ads" anywhere on your site will get you banned from ALL ad networks. This violates every ad network's terms of service.
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>3. Never use bot traffic or paid traffic!</strong> Buying cheap traffic from Fiverr or using traffic bots will get you banned. Ad networks want real human visitors who are genuinely interested in your content. Only use the free organic methods described in this guide.
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>4. Never put too many ads!</strong> More ads does NOT mean more money. Too many ads make visitors leave (bounce rate increases) and ad networks may penalize you. CodeForge already has optimal ad placement - do not add more.
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>5. Never copy content from other sites!</strong> Duplicate content gets penalized by Google (no SEO traffic) and rejected by ad networks. Always write original content or heavily rewrite in your own words.
+  </div>
+
+  <h2>Things You SHOULD Do</h2>
+
+  <div class="card">
+    <div class="card-title">Write 2-3 Blog Posts Per Week</div>
+    <p>Every blog post is a new page that can rank on Google. Topics: JavaScript tips, CSS tricks, React tutorials, web dev career advice. Aim for 800-1500 words per post. More content = more traffic = more earnings.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Share Every New Post on Social Media</div>
+    <p>When you publish a new blog post or tool, share it on at least 3-4 platforms. This creates initial traffic signals that help Google discover and rank your content faster.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Focus on English Content</div>
+    <p>English content earns 5-10x more than Urdu content because advertisers pay more for US/UK/Europe audiences. Write everything in English. You can add Urdu later as a secondary language.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Be Patient - It Takes Time</div>
+    <p>Every successful earning website took 6-12 months to become profitable. The first 3 months will feel slow. Keep posting, keep sharing, and the traffic will come. SEO compounds over time - month 6 will be much better than month 1.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Monitor Your Analytics</div>
+    <p>Add Google Analytics (free) to track your visitors. Also use the Ezoic/Adsterra dashboard to see which pages earn the most. Double down on what works - if a specific tool gets more traffic, create similar tools.</p>
+  </div>
+
+  <h2>Quick Action Checklist</h2>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Task</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Deploy website on Vercel</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Sign up for Adsterra</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Add Adsterra Zone IDs to Vercel env vars</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Redeploy on Vercel</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Verify ads are showing on live site</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Sign up for Ezoic</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Sign up for Payoneer</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Share website on 5+ Facebook groups</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Create Twitter/X account for CodeForge</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Write first new blog post</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Add Google Analytics</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Answer 5 Quora questions with tool links</td>
+      <td></td>
+    </tr>
+  </table>
+
+  <div class="callout callout-success">
+    <strong>Final Note:</strong> You have everything you need to start earning. The website is built, the ad system is ready, the tools are working, and the blog has content. Now it's up to you to deploy, sign up for ads, and consistently drive traffic. Every journey starts with a single step - deploy your site today!
+  </div>
+</div>
+
+</body>
+</html>
