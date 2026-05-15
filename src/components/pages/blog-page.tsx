@@ -7,71 +7,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import type { PageName } from "@/components/site-header"
+import { blogPosts } from "@/lib/blog-data"
 
 interface BlogPageProps {
   onNavigate: (page: PageName) => void
 }
 
 const categories = ["All", "Web Development", "JavaScript", "CSS & Design", "React & Next.js", "Freelancing"]
-
-const blogPosts = [
-  {
-    title: "10 Essential VS Code Extensions for Web Developers in 2025",
-    excerpt: "Discover the must-have VS Code extensions that will supercharge your web development workflow. From intelligent code completion to debugging powerhouses, these tools will transform how you write code every day.",
-    date: "Jan 15, 2025",
-    category: "Web Development",
-    readTime: "8 min",
-  },
-  {
-    title: "Understanding React Server Components: A Complete Guide",
-    excerpt: "React Server Components represent a paradigm shift in how we build React applications. Learn how they work under the hood, when to use them, and how they integrate with Next.js App Router for optimal performance.",
-    date: "Jan 10, 2025",
-    category: "React & Next.js",
-    readTime: "12 min",
-  },
-  {
-    title: "CSS Container Queries: The Future of Responsive Design",
-    excerpt: "Container queries are changing the way we think about responsive design. Instead of responding to viewport size, components can now adapt to their container. Learn how to use this powerful feature today.",
-    date: "Jan 5, 2025",
-    category: "CSS & Design",
-    readTime: "6 min",
-  },
-  {
-    title: "JavaScript Performance Optimization: 15 Proven Techniques",
-    excerpt: "From code splitting and lazy loading to memory management and Web Workers, these 15 battle-tested techniques will help you build faster, more responsive JavaScript applications that users love.",
-    date: "Dec 28, 2024",
-    category: "JavaScript",
-    readTime: "10 min",
-  },
-  {
-    title: "How to Land Your First Freelance Web Development Client",
-    excerpt: "Breaking into freelancing can be daunting. This step-by-step guide covers everything from building your portfolio and setting rates to finding clients and delivering projects that earn repeat business.",
-    date: "Dec 20, 2024",
-    category: "Freelancing",
-    readTime: "9 min",
-  },
-  {
-    title: "Building Accessible Web Apps: A Practical Developer's Guide",
-    excerpt: "Accessibility isn't optional — it's essential. Learn practical techniques for building web applications that work for everyone, from semantic HTML and ARIA attributes to keyboard navigation and screen reader testing.",
-    date: "Dec 15, 2024",
-    category: "Web Development",
-    readTime: "11 min",
-  },
-  {
-    title: "Next.js 15 App Router: Migration Guide and Best Practices",
-    excerpt: "Migrating from Pages Router to App Router in Next.js 15 can feel overwhelming. This comprehensive guide walks you through the migration process step by step, with real-world examples and common pitfalls to avoid.",
-    date: "Dec 10, 2024",
-    category: "React & Next.js",
-    readTime: "14 min",
-  },
-  {
-    title: "Modern CSS Layouts: Grid, Flexbox, and Beyond",
-    excerpt: "Master the art of CSS layout with this deep dive into CSS Grid and Flexbox. Learn when to use each, advanced techniques for complex layouts, and how the two systems work together beautifully.",
-    date: "Dec 5, 2024",
-    category: "CSS & Design",
-    readTime: "7 min",
-  },
-]
 
 export function BlogPage({ onNavigate }: BlogPageProps) {
   const [activeCategory, setActiveCategory] = React.useState("All")
@@ -85,7 +27,7 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
     return matchesCategory && matchesSearch
   })
 
-  const recentPosts = blogPosts.slice(0, 4)
+  const recentPosts = blogPosts.slice(0, 5)
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-10 md:py-16">
@@ -132,8 +74,8 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
 
             {/* Blog Posts */}
             <div className="space-y-6">
-              {filteredPosts.map((post, index) => (
-                <Card key={index} className="group hover:shadow-lg transition-all duration-300">
+              {filteredPosts.map((post) => (
+                <Card key={post.id} className="group hover:shadow-lg transition-all duration-300">
                   <CardHeader>
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <Badge variant="secondary" className="text-xs">{post.category}</Badge>
@@ -151,7 +93,11 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
                     </CardDescription>
                   </CardHeader>
                   <CardFooter>
-                    <Button variant="ghost" className="text-emerald-600 dark:text-emerald-400 p-0 h-auto font-medium">
+                    <Button
+                      variant="ghost"
+                      className="text-emerald-600 dark:text-emerald-400 p-0 h-auto font-medium"
+                      onClick={() => onNavigate(`blog-post-${post.id}` as PageName)}
+                    >
                       Read More <ArrowRight className="ml-1 h-4 w-4" />
                     </Button>
                   </CardFooter>
@@ -178,20 +124,24 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {categories.filter(c => c !== "All").map((cat) => (
-                    <li key={cat}>
-                      <button
-                        onClick={() => setActiveCategory(cat)}
-                        className={`text-sm w-full text-left px-2 py-1.5 rounded transition-colors ${
-                          activeCategory === cat
-                            ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    </li>
-                  ))}
+                  {categories.filter(c => c !== "All").map((cat) => {
+                    const count = blogPosts.filter(p => p.category === cat).length
+                    return (
+                      <li key={cat}>
+                        <button
+                          onClick={() => setActiveCategory(cat)}
+                          className={`text-sm w-full text-left px-2 py-1.5 rounded transition-colors flex justify-between ${
+                            activeCategory === cat
+                              ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          <span>{cat}</span>
+                          <span className="text-xs">{count}</span>
+                        </button>
+                      </li>
+                    )
+                  })}
                 </ul>
               </CardContent>
             </Card>
@@ -203,9 +153,12 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
-                  {recentPosts.map((post, index) => (
-                    <li key={index}>
-                      <button className="text-sm text-left text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors line-clamp-2 leading-snug">
+                  {recentPosts.map((post) => (
+                    <li key={post.id}>
+                      <button
+                        onClick={() => onNavigate(`blog-post-${post.id}` as PageName)}
+                        className="text-sm text-left text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors line-clamp-2 leading-snug"
+                      >
                         {post.title}
                       </button>
                     </li>

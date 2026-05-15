@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 
-export type PageName = "home" | "tools" | "blog" | "about" | "contact" | "privacy" | "terms" | "disclaimer" | "image-compressor" | "word-counter" | "json-formatter" | "password-generator" | "color-picker" | "css-gradient-generator"
+export type PageName = "home" | "tools" | "blog" | "about" | "contact" | "privacy" | "terms" | "disclaimer" | "image-compressor" | "word-counter" | "json-formatter" | "password-generator" | "color-picker" | "css-gradient-generator" | `blog-post-${string}`
 
 interface SiteHeaderProps {
   currentPage: PageName

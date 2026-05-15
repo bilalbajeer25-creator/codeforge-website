@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { HomePage } from "@/components/pages/home-page"
 import { ToolsPage } from "@/components/pages/tools-page"
 import { BlogPage } from "@/components/pages/blog-page"
+import { BlogPostPage } from "@/components/pages/blog-post-page"
 import { AboutPage } from "@/components/pages/about-page"
 import { ContactPage } from "@/components/pages/contact-page"
 import { PrivacyPage } from "@/components/pages/privacy-page"
@@ -18,16 +19,27 @@ import { PasswordGenerator } from "@/components/tools/password-generator"
 import { ColorPicker } from "@/components/tools/color-picker"
 import { CssGradientGenerator } from "@/components/tools/css-gradient-generator"
 
+const staticPages: string[] = [
+  "home", "tools", "blog", "about", "contact",
+  "privacy", "terms", "disclaimer",
+  "image-compressor", "word-counter", "json-formatter",
+  "password-generator", "color-picker", "css-gradient-generator",
+]
+
 function getPageFromHash(): PageName {
   if (typeof window === "undefined") return "home"
   const hash = window.location.hash.replace("#", "")
-  const validPages: PageName[] = [
-    "home", "tools", "blog", "about", "contact",
-    "privacy", "terms", "disclaimer",
-    "image-compressor", "word-counter", "json-formatter",
-    "password-generator", "color-picker", "css-gradient-generator",
-  ]
-  return validPages.includes(hash as PageName) ? (hash as PageName) : "home"
+  if (staticPages.includes(hash)) return hash as PageName
+  if (hash.startsWith("blog-post-")) return hash as PageName
+  return "home"
+}
+
+export function extractBlogPostId(page: PageName): string | null {
+  const str = page as string
+  if (str.startsWith("blog-post-")) {
+    return str.replace("blog-post-", "")
+  }
+  return null
 }
 
 export default function Home() {
@@ -52,12 +64,17 @@ export default function Home() {
       setCurrentPage(page)
     }
     window.addEventListener("hashchange", handleHashChange)
-    // Set initial page from hash
     setCurrentPage(getPageFromHash())
     return () => window.removeEventListener("hashchange", handleHashChange)
   }, [])
 
   const renderPage = () => {
+    // Check for blog post page
+    const blogPostId = extractBlogPostId(currentPage)
+    if (blogPostId) {
+      return <BlogPostPage postId={blogPostId} onNavigate={navigate} />
+    }
+
     switch (currentPage) {
       case "home":
         return <HomePage onNavigate={navigate} />
@@ -92,9 +109,12 @@ export default function Home() {
     }
   }
 
+  // Determine which nav item should be highlighted
+  const activeNavPage = currentPage.startsWith("blog-post-") ? "blog" : currentPage
+
   return (
     <div className="min-h-screen flex flex-col">
-      <SiteHeader currentPage={currentPage} onNavigate={navigate} />
+      <SiteHeader currentPage={activeNavPage} onNavigate={navigate} />
       <main className={`flex-1 transition-opacity duration-150 ${isTransitioning ? "opacity-0" : "opacity-100"}`}>
         {renderPage()}
       </main>

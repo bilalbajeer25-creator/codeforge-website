@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import type { PageName } from "@/components/site-header"
+import { blogPosts } from "@/lib/blog-data"
 
 interface HomePageProps {
   onNavigate: (page: PageName) => void
@@ -48,26 +49,7 @@ const featuredTools = [
   },
 ]
 
-const latestPosts = [
-  {
-    title: "10 Essential VS Code Extensions for Web Developers in 2025",
-    excerpt: "Discover the must-have VS Code extensions that will supercharge your web development workflow and boost productivity.",
-    date: "Jan 15, 2025",
-    category: "Web Development",
-  },
-  {
-    title: "Understanding React Server Components: A Complete Guide",
-    excerpt: "Deep dive into React Server Components, how they work, and when to use them in your Next.js applications.",
-    date: "Jan 10, 2025",
-    category: "React & Next.js",
-  },
-  {
-    title: "CSS Container Queries: The Future of Responsive Design",
-    excerpt: "Learn how container queries are changing the way we build responsive components and why you should start using them.",
-    date: "Jan 5, 2025",
-    category: "CSS & Design",
-  },
-]
+const latestPosts = blogPosts.slice(0, 3)
 
 const benefits = [
   {
@@ -221,8 +203,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {latestPosts.map((post, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            {latestPosts.map((post) => (
+              <Card key={post.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardHeader>
                   <div className="flex items-center gap-2 mb-2">
                     <Badge variant="secondary" className="text-xs">{post.category}</Badge>
@@ -237,7 +219,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   <Button
                     variant="ghost"
                     className="text-emerald-600 dark:text-emerald-400 p-0 h-auto font-medium"
-                    onClick={() => onNavigate("blog")}
+                    onClick={() => onNavigate(`blog-post-${post.id}` as PageName)}
                   >
                     Read More <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
