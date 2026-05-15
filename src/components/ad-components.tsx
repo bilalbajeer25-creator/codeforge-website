@@ -6,46 +6,30 @@ import { X } from "lucide-react"
 // ============================================================
 // ADSTERRA AD CONFIGURATION - APPROVED! ✅
 // Website: developertools.space-z.ai
-// Approved: 15 May 2026
-// ============================================================
-// Zone IDs from Adsterra:
-// Popunder:    29351831
-// Native Banner: 29351832
-// Banner 728x90: 29351833
-// Social Bar:  29351834
-// Smartlink:   29351835
+// Zone IDs: Popunder=29351831, Native=29351832,
+//           Banner=29351833, SocialBar=29351834, Smartlink=29351835
 // ============================================================
 
-type AdNetwork = "none" | "adsterra"
+// All Zone IDs hardcoded - guaranteed to work
+const ZONE_BANNER = "29351833"
+const ZONE_NATIVE = "29351832"
+const ZONE_SOCIAL_BAR = "29351834"
+const ZONE_POPUNDER = "29351831"
+const ZONE_SMARTLINK = "29351835"
 
-function getAdNetwork(): AdNetwork {
-  if (typeof window === "undefined") return "none"
-  const env = process.env.NEXT_PUBLIC_AD_NETWORK as AdNetwork
-  return env || "adsterra" // Default to adsterra since we're approved
-}
+// Track which zones have been loaded
+const loadedZones = new Set<string>()
 
-// Adsterra Zone IDs - Hardcoded from approval + env fallback
-const ADSTERRA_BANNER_ID = process.env.NEXT_PUBLIC_ADSTERRA_BANNER_ID || "29351833"
-const ADSTERRA_NATIVE_ID = process.env.NEXT_PUBLIC_ADSTERRA_NATIVE_ID || "29351832"
-const ADSTERRA_STICKY_ID = process.env.NEXT_PUBLIC_ADSTERRA_STICKY_ID || "29351834"
-const ADSTERRA_POPUNDER_ID = process.env.NEXT_PUBLIC_ADSTERRA_POPUNDER_ID || "29351831"
-const ADSTERRA_SMARTLINK_ID = process.env.NEXT_PUBLIC_ADSTERRA_INTERSTITIAL_ID || "29351835"
-
-// ============================================================
-// ADSTERRA SCRIPT LOADER
-// Adsterra loads ads via script tags:
-// https://www.highperformanceformat.com/{ZONE_ID}/invoke.js
-// ============================================================
-
-function loadAdsterraScript(containerId: string, zoneId: string) {
+// Load an Adsterra script into a container by zone ID
+function loadAdsterraZone(containerId: string, zoneId: string) {
   if (typeof window === "undefined" || !zoneId) return
+  if (loadedZones.has(containerId)) return
 
   const container = document.getElementById(containerId)
   if (!container) return
-
-  // Don't load twice in same container
   if (container.querySelector("script")) return
 
+  loadedZones.add(containerId)
   const script = document.createElement("script")
   script.async = true
   script.src = `https://www.highperformanceformat.com/${zoneId}/invoke.js`
@@ -53,8 +37,16 @@ function loadAdsterraScript(containerId: string, zoneId: string) {
 }
 
 // ============================================================
-// AD BANNER COMPONENT (728x90 Leaderboard)
-// Zone ID: 29351833
+// HOOK: Wait until component is mounted on client
+// ============================================================
+function useIsMounted() {
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => { setMounted(true) }, [])
+  return mounted
+}
+
+// ============================================================
+// AD BANNER (728x90 Leaderboard) - Zone: 29351833
 // ============================================================
 interface AdBannerProps {
   slot?: string
@@ -64,106 +56,82 @@ interface AdBannerProps {
 }
 
 export function AdBanner({ slot = "banner", format = "horizontal", className = "", showClose = false }: AdBannerProps) {
+  const mounted = useIsMounted()
   const [closed, setClosed] = React.useState(false)
-  const network = getAdNetwork()
-  // Unique ID for each ad slot so multiple banners can coexist
   const containerId = `adsterra-banner-${slot}`
 
   React.useEffect(() => {
-    if (network === "adsterra" && ADSTERRA_BANNER_ID) {
-      const timer = setTimeout(() => {
-        loadAdsterraScript(containerId, ADSTERRA_BANNER_ID)
-      }, 200)
+    if (mounted) {
+      const timer = setTimeout(() => loadAdsterraZone(containerId, ZONE_BANNER), 300)
       return () => clearTimeout(timer)
     }
-  }, [network, containerId])
+  }, [mounted, containerId])
 
-  if (closed || network === "none") return null
+  if (!mounted || closed) return null
 
   const sizeClasses = {
-    horizontal: "w-full min-h-[90px] md:min-h-[90px]",
+    horizontal: "w-full min-h-[90px]",
     vertical: "w-full min-h-[250px]",
     rectangle: "w-full min-h-[250px] max-w-[336px]",
     sidebar: "w-full min-h-[600px]",
   }
 
-  if (network === "adsterra") {
-    return (
-      <div className={`relative my-4 ${className}`}>
-        {showClose && (
-          <button
-            onClick={() => setClosed(true)}
-            className="absolute -top-1 -right-1 z-10 h-5 w-5 rounded-full bg-muted/80 text-muted-foreground hover:bg-muted flex items-center justify-center"
-            aria-label="Close ad"
-          >
-            <X className="h-3 w-3" />
-          </button>
-        )}
-        <div className={`${sizeClasses[format]} flex items-center justify-center overflow-hidden`}>
-          {/* Adsterra Banner 728x90 - Zone: 29351833 */}
-          <div id={containerId} className="w-full min-h-[90px]"></div>
-        </div>
+  return (
+    <div className={`relative my-4 ${className}`}>
+      {showClose && (
+        <button
+          onClick={() => setClosed(true)}
+          className="absolute -top-1 -right-1 z-10 h-5 w-5 rounded-full bg-muted/80 text-muted-foreground hover:bg-muted flex items-center justify-center"
+          aria-label="Close ad"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      )}
+      <div className={`${sizeClasses[format]} flex items-center justify-center overflow-hidden`}>
+        <div id={containerId} className="w-full min-h-[90px]"></div>
       </div>
-    )
-  }
-
-  return null
+    </div>
+  )
 }
 
 // ============================================================
-// SOCIAL BAR / STICKY MOBILE AD
-// Zone ID: 29351834
+// SOCIAL BAR / STICKY MOBILE AD - Zone: 29351834
 // ============================================================
 export function StickyAd() {
+  const mounted = useIsMounted()
   const [closed, setClosed] = React.useState(false)
-  const [isVisible, setIsVisible] = React.useState(false)
-  const network = getAdNetwork()
+  const [show, setShow] = React.useState(false)
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 3000)
+    const timer = setTimeout(() => setShow(true), 3000)
     return () => clearTimeout(timer)
   }, [])
 
-  if (closed || !isVisible || network === "none") return null
+  React.useEffect(() => {
+    if (mounted && show) {
+      loadAdsterraZone("adsterra-social-bar", ZONE_SOCIAL_BAR)
+    }
+  }, [mounted, show])
 
-  if (network === "adsterra" && ADSTERRA_STICKY_ID) {
-    return (
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
-        <div className="relative">
-          <button
-            onClick={() => setClosed(true)}
-            className="absolute -top-6 right-2 z-50 h-6 px-2 rounded-t bg-muted/80 text-muted-foreground hover:bg-muted flex items-center gap-1 text-xs"
-          >
-            <X className="h-3 w-3" /> Close
-          </button>
-          {/* Adsterra Social Bar - Zone: 29351834 */}
-          <div id="adsterra-social-bar"></div>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function(){
-                  var c=document.getElementById('adsterra-social-bar');
-                  if(!c)return;
-                  if(c.querySelector('script'))return;
-                  var s=document.createElement('script');
-                  s.src='https://www.highperformanceformat.com/${ADSTERRA_STICKY_ID}/invoke.js';
-                  s.async=true;
-                  c.appendChild(s);
-                })();
-              `,
-            }}
-          />
-        </div>
+  if (!mounted || !show || closed) return null
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
+      <div className="relative">
+        <button
+          onClick={() => setClosed(true)}
+          className="absolute -top-6 right-2 z-50 h-6 px-2 rounded-t bg-muted/80 text-muted-foreground hover:bg-muted flex items-center gap-1 text-xs"
+        >
+          <X className="h-3 w-3" /> Close
+        </button>
+        <div id="adsterra-social-bar" className="w-full min-h-[50px]"></div>
       </div>
-    )
-  }
-
-  return null
+    </div>
+  )
 }
 
 // ============================================================
-// IN-ARTICLE / NATIVE BANNER AD
-// Zone ID: 29351832
+// IN-ARTICLE / NATIVE BANNER - Zone: 29351832
 // ============================================================
 interface InArticleAdProps {
   slot?: string
@@ -171,35 +139,27 @@ interface InArticleAdProps {
 }
 
 export function InArticleAd({ slot = "in-article", className = "" }: InArticleAdProps) {
-  const network = getAdNetwork()
+  const mounted = useIsMounted()
   const containerId = `adsterra-native-${slot}`
 
   React.useEffect(() => {
-    if (network === "adsterra" && ADSTERRA_NATIVE_ID) {
-      const timer = setTimeout(() => {
-        loadAdsterraScript(containerId, ADSTERRA_NATIVE_ID)
-      }, 200)
+    if (mounted) {
+      const timer = setTimeout(() => loadAdsterraZone(containerId, ZONE_NATIVE), 300)
       return () => clearTimeout(timer)
     }
-  }, [network, containerId])
+  }, [mounted, containerId])
 
-  if (network === "none") return null
+  if (!mounted) return null
 
-  if (network === "adsterra" && ADSTERRA_NATIVE_ID) {
-    return (
-      <div className={`my-8 ${className}`}>
-        {/* Adsterra Native Banner - Zone: 29351832 */}
-        <div id={containerId} className="w-full min-h-[250px]"></div>
-      </div>
-    )
-  }
-
-  return null
+  return (
+    <div className={`my-8 ${className}`}>
+      <div id={containerId} className="w-full min-h-[250px]"></div>
+    </div>
+  )
 }
 
 // ============================================================
-// SIDEBAR AD (300x600)
-// Uses Banner Zone ID: 29351833
+// SIDEBAR AD - Zone: 29351833 (same banner zone)
 // ============================================================
 interface SidebarAdProps {
   slot?: string
@@ -207,44 +167,35 @@ interface SidebarAdProps {
 }
 
 export function SidebarAd({ slot = "sidebar", className = "" }: SidebarAdProps) {
-  const network = getAdNetwork()
+  const mounted = useIsMounted()
   const containerId = `adsterra-sidebar-${slot}`
 
   React.useEffect(() => {
-    if (network === "adsterra" && ADSTERRA_BANNER_ID) {
-      const timer = setTimeout(() => {
-        loadAdsterraScript(containerId, ADSTERRA_BANNER_ID)
-      }, 200)
+    if (mounted) {
+      const timer = setTimeout(() => loadAdsterraZone(containerId, ZONE_BANNER), 300)
       return () => clearTimeout(timer)
     }
-  }, [network, containerId])
+  }, [mounted, containerId])
 
-  if (network === "none") return null
+  if (!mounted) return null
 
-  if (network === "adsterra" && ADSTERRA_BANNER_ID) {
-    return (
-      <div className={className}>
-        {/* Adsterra Sidebar Banner - Zone: 29351833 */}
-        <div id={containerId} className="w-full min-h-[600px]"></div>
-      </div>
-    )
-  }
-
-  return null
+  return (
+    <div className={className}>
+      <div id={containerId} className="w-full min-h-[600px]"></div>
+    </div>
+  )
 }
 
 // ============================================================
-// POPUNDER AD - HIGHEST EARNING! 💰
-// Zone ID: 29351831
-// Loads once per page session
+// POPUNDER AD - Zone: 29351831 💰 HIGHEST EARNING
 // ============================================================
 let popunderLoaded = false
 
 export function AdsterraPopunder() {
-  const network = getAdNetwork()
+  const mounted = useIsMounted()
 
   React.useEffect(() => {
-    if (network === "adsterra" && ADSTERRA_POPUNDER_ID && !popunderLoaded) {
+    if (mounted && !popunderLoaded) {
       popunderLoaded = true
       const script = document.createElement("script")
       script.async = true
@@ -252,27 +203,25 @@ export function AdsterraPopunder() {
         (function(d,z,s){
           s.src='https://'+d+'/400/'+z;
           try{(document.body||document.documentElement).appendChild(s)}catch(e){}
-        })('www.highperformanceformat.com','${ADSTERRA_POPUNDER_ID}',document.createElement('script'));
+        })('www.highperformanceformat.com','${ZONE_POPUNDER}',document.createElement('script'));
       `
       document.body.appendChild(script)
     }
-  }, [network])
+  }, [mounted])
 
   return null
 }
 
 // ============================================================
-// SMARTLINK AD
-// Zone ID: 29351835
-// Smartlink redirects users to best-converting offers
+// SMARTLINK - Zone: 29351835
 // ============================================================
 let smartlinkLoaded = false
 
 export function AdsterraSmartlink() {
-  const network = getAdNetwork()
+  const mounted = useIsMounted()
 
   React.useEffect(() => {
-    if (network === "adsterra" && ADSTERRA_SMARTLINK_ID && !smartlinkLoaded) {
+    if (mounted && !smartlinkLoaded) {
       smartlinkLoaded = true
       const script = document.createElement("script")
       script.async = true
@@ -280,11 +229,11 @@ export function AdsterraSmartlink() {
         (function(d,z,s){
           s.src='https://'+d+'/400/'+z;
           try{(document.body||document.documentElement).appendChild(s)}catch(e){}
-        })('www.highperformanceformat.com','${ADSTERRA_SMARTLINK_ID}',document.createElement('script'));
+        })('www.highperformanceformat.com','${ZONE_SMARTLINK}',document.createElement('script'));
       `
       document.body.appendChild(script)
     }
-  }, [network])
+  }, [mounted])
 
   return null
 }
