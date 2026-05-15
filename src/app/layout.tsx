@@ -45,55 +45,24 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* ============================================ */}
-        {/* ADSTERRA ADS - EXACT SCRIPTS FROM DASHBOARD  */}
-        {/* Website: developertools.space-z.ai           */}
+        {/* ADSTERRA - Auto-injecting scripts (work from head) */}
         {/* ============================================ */}
 
-        {/* 1. Banner 728x90 */}
-        <Script
-          id="adsterra-banner-config"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              atOptions = {
-                'key' : '1e8dd3e93f030e954013bb317706f109',
-                'format' : 'iframe',
-                'height' : 90,
-                'width' : 728,
-                'params' : {}
-              };
-            `,
-          }}
-        />
-        <Script
-          id="adsterra-banner-script"
-          src="https://www.highperformanceformat.com/1e8dd3e93f030e954013bb317706f109/invoke.js"
-          strategy="afterInteractive"
-        />
-
-        {/* 2. Native Banner */}
-        <Script
-          id="adsterra-native"
-          src="https://pl29452331.profitablecpmratenetwork.com/79d0c5ec789aea30f7ce3791e4539308/invoke.js"
-          strategy="afterInteractive"
-          async
-        />
-
-        {/* 3. Popunder (HIGHEST EARNING!) */}
+        {/* Popunder - Auto-injects, works from head */}
         <Script
           id="adsterra-popunder"
           src="https://pl29452330.profitablecpmratenetwork.com/15/86/0a/15860a0f7c9e80579176284af1f29357.js"
           strategy="afterInteractive"
         />
 
-        {/* 4. Social Bar (Sticky Mobile) */}
+        {/* Social Bar - Auto-injects sticky bar, works from head */}
         <Script
           id="adsterra-social-bar"
           src="https://pl29452333.profitablecpmratenetwork.com/7a/15/43/7a1543bcf86b12c60dad53cf5e92b94a.js"
           strategy="afterInteractive"
         />
 
-        {/* 5. Smartlink */}
+        {/* Smartlink - Direct URL, works from head */}
         <Script
           id="adsterra-smartlink"
           src="https://www.profitablecpmratenetwork.com/jqumwent2?key=44dfac2e953684f89a0aa8612ebb89ec"
