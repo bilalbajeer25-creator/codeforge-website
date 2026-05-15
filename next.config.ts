@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // output: "export",  // Disabled for Adsterra ads (needs server-side rendering)
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
