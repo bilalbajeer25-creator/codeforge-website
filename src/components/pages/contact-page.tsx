@@ -54,8 +54,8 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
     {
       icon: Mail,
       label: "Email",
-      value: "contact@codeforge.dev",
-      href: "mailto:contact@codeforge.dev",
+      value: "bilalbajeer25@gmail.com",
+      href: "mailto:bilalbajeer25@gmail.com",
     },
     {
       icon: MapPin,

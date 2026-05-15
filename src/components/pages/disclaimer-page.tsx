@@ -107,7 +107,7 @@ export function DisclaimerPage({ onNavigate }: DisclaimerPageProps) {
             </p>
             <div className="mt-3 p-4 bg-muted/50 rounded-lg">
               <p className="font-medium text-foreground">CodeForge</p>
-              <p>Email: contact@codeforge.dev</p>
+              <p>Email: bilalbajeer25@gmail.com</p>
               <p>Location: Pakistan</p>
             </div>
           </section>

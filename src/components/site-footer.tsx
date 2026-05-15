@@ -86,7 +86,7 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
                 <Linkedin className="h-5 w-5" />
               </a>
               <a
-                href="mailto:contact@codeforge.dev"
+                href="mailto:bilalbajeer25@gmail.com"
                 className="text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
                 aria-label="Email"
               >
