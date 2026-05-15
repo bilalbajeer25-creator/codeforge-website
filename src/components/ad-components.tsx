@@ -4,25 +4,21 @@ import * as React from "react"
 import { X } from "lucide-react"
 
 // ============================================================
-// ADSTERRA AD CONFIGURATION - APPROVED! ✅
+// ADSTERRA ADS - EXACT SCRIPTS FROM DASHBOARD
 // Website: developertools.space-z.ai
-// Zone IDs: Popunder=29351831, Native=29351832,
-//           Banner=29351833, SocialBar=29351834, Smartlink=29351835
+// Approved: 15 May 2026
 // ============================================================
 
-// All Zone IDs hardcoded - guaranteed to work
-const ZONE_BANNER = "29351833"
-const ZONE_NATIVE = "29351832"
-const ZONE_SOCIAL_BAR = "29351834"
-const ZONE_POPUNDER = "29351831"
-const ZONE_SMARTLINK = "29351835"
+// Ad keys from Adsterra dashboard
+const BANNER_KEY = "1e8dd3e93f030e954013bb317706f109"
+const NATIVE_KEY = "79d0c5ec789aea30f7ce3791e4539308"
 
-// Track which zones have been loaded
+// Track loaded zones to prevent duplicates
 const loadedZones = new Set<string>()
 
-// Load an Adsterra script into a container by zone ID
-function loadAdsterraZone(containerId: string, zoneId: string) {
-  if (typeof window === "undefined" || !zoneId) return
+// Load an ad script into a container div
+function loadAdScript(containerId: string, scriptSrc: string, isNative: boolean = false) {
+  if (typeof window === "undefined") return
   if (loadedZones.has(containerId)) return
 
   const container = document.getElementById(containerId)
@@ -30,15 +26,36 @@ function loadAdsterraZone(containerId: string, zoneId: string) {
   if (container.querySelector("script")) return
 
   loadedZones.add(containerId)
-  const script = document.createElement("script")
-  script.async = true
-  script.src = `https://www.highperformanceformat.com/${zoneId}/invoke.js`
-  container.appendChild(script)
+
+  if (isNative) {
+    // Native Banner uses async script
+    const script = document.createElement("script")
+    script.async = true
+    script.setAttribute("data-cfasync", "false")
+    script.src = scriptSrc
+    container.appendChild(script)
+  } else {
+    // Banner uses atOptions config + invoke.js
+    const configScript = document.createElement("script")
+    configScript.innerHTML = `
+      atOptions = {
+        'key' : '${BANNER_KEY}',
+        'format' : 'iframe',
+        'height' : 90,
+        'width' : 728,
+        'params' : {}
+      };
+    `
+    container.appendChild(configScript)
+
+    const invokeScript = document.createElement("script")
+    invokeScript.src = scriptSrc
+    invokeScript.async = true
+    container.appendChild(invokeScript)
+  }
 }
 
-// ============================================================
-// HOOK: Wait until component is mounted on client
-// ============================================================
+// Hook: wait until client-side mounted
 function useIsMounted() {
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => { setMounted(true) }, [])
@@ -46,7 +63,7 @@ function useIsMounted() {
 }
 
 // ============================================================
-// AD BANNER (728x90 Leaderboard) - Zone: 29351833
+// AD BANNER (728x90) - Key: 1e8dd3e93f030e954013bb317706f109
 // ============================================================
 interface AdBannerProps {
   slot?: string
@@ -62,7 +79,9 @@ export function AdBanner({ slot = "banner", format = "horizontal", className = "
 
   React.useEffect(() => {
     if (mounted) {
-      const timer = setTimeout(() => loadAdsterraZone(containerId, ZONE_BANNER), 300)
+      const timer = setTimeout(() => {
+        loadAdScript(containerId, `https://www.highperformanceformat.com/${BANNER_KEY}/invoke.js`, false)
+      }, 500)
       return () => clearTimeout(timer)
     }
   }, [mounted, containerId])
@@ -95,43 +114,18 @@ export function AdBanner({ slot = "banner", format = "horizontal", className = "
 }
 
 // ============================================================
-// SOCIAL BAR / STICKY MOBILE AD - Zone: 29351834
+// SOCIAL BAR / STICKY MOBILE AD
+// Script loaded from layout.tsx (Social Bar Zone)
 // ============================================================
 export function StickyAd() {
-  const mounted = useIsMounted()
-  const [closed, setClosed] = React.useState(false)
-  const [show, setShow] = React.useState(false)
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 3000)
-    return () => clearTimeout(timer)
-  }, [])
-
-  React.useEffect(() => {
-    if (mounted && show) {
-      loadAdsterraZone("adsterra-social-bar", ZONE_SOCIAL_BAR)
-    }
-  }, [mounted, show])
-
-  if (!mounted || !show || closed) return null
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
-      <div className="relative">
-        <button
-          onClick={() => setClosed(true)}
-          className="absolute -top-6 right-2 z-50 h-6 px-2 rounded-t bg-muted/80 text-muted-foreground hover:bg-muted flex items-center gap-1 text-xs"
-        >
-          <X className="h-3 w-3" /> Close
-        </button>
-        <div id="adsterra-social-bar" className="w-full min-h-[50px]"></div>
-      </div>
-    </div>
-  )
+  // Social Bar is loaded via layout.tsx script tag
+  // It automatically creates a sticky bar at bottom of mobile
+  // No additional component needed - just export empty for compatibility
+  return null
 }
 
 // ============================================================
-// IN-ARTICLE / NATIVE BANNER - Zone: 29351832
+// IN-ARTICLE / NATIVE BANNER AD - Key: 79d0c5ec789aea30f7ce3791e4539308
 // ============================================================
 interface InArticleAdProps {
   slot?: string
@@ -144,7 +138,9 @@ export function InArticleAd({ slot = "in-article", className = "" }: InArticleAd
 
   React.useEffect(() => {
     if (mounted) {
-      const timer = setTimeout(() => loadAdsterraZone(containerId, ZONE_NATIVE), 300)
+      const timer = setTimeout(() => {
+        loadAdScript(containerId, `https://pl29452331.profitablecpmratenetwork.com/${NATIVE_KEY}/invoke.js`, true)
+      }, 500)
       return () => clearTimeout(timer)
     }
   }, [mounted, containerId])
@@ -159,7 +155,7 @@ export function InArticleAd({ slot = "in-article", className = "" }: InArticleAd
 }
 
 // ============================================================
-// SIDEBAR AD - Zone: 29351833 (same banner zone)
+// SIDEBAR AD - Uses Banner Key
 // ============================================================
 interface SidebarAdProps {
   slot?: string
@@ -172,7 +168,9 @@ export function SidebarAd({ slot = "sidebar", className = "" }: SidebarAdProps) 
 
   React.useEffect(() => {
     if (mounted) {
-      const timer = setTimeout(() => loadAdsterraZone(containerId, ZONE_BANNER), 300)
+      const timer = setTimeout(() => {
+        loadAdScript(containerId, `https://www.highperformanceformat.com/${BANNER_KEY}/invoke.js`, false)
+      }, 500)
       return () => clearTimeout(timer)
     }
   }, [mounted, containerId])
@@ -187,53 +185,17 @@ export function SidebarAd({ slot = "sidebar", className = "" }: SidebarAdProps) 
 }
 
 // ============================================================
-// POPUNDER AD - Zone: 29351831 💰 HIGHEST EARNING
+// POPUNDER - Loaded via layout.tsx script tag
 // ============================================================
-let popunderLoaded = false
-
 export function AdsterraPopunder() {
-  const mounted = useIsMounted()
-
-  React.useEffect(() => {
-    if (mounted && !popunderLoaded) {
-      popunderLoaded = true
-      const script = document.createElement("script")
-      script.async = true
-      script.innerHTML = `
-        (function(d,z,s){
-          s.src='https://'+d+'/400/'+z;
-          try{(document.body||document.documentElement).appendChild(s)}catch(e){}
-        })('www.highperformanceformat.com','${ZONE_POPUNDER}',document.createElement('script'));
-      `
-      document.body.appendChild(script)
-    }
-  }, [mounted])
-
+  // Popunder is loaded via layout.ts5 script tag
   return null
 }
 
 // ============================================================
-// SMARTLINK - Zone: 29351835
+// SMARTLINK - Loaded via layout.tsx script tag
 // ============================================================
-let smartlinkLoaded = false
-
 export function AdsterraSmartlink() {
-  const mounted = useIsMounted()
-
-  React.useEffect(() => {
-    if (mounted && !smartlinkLoaded) {
-      smartlinkLoaded = true
-      const script = document.createElement("script")
-      script.async = true
-      script.innerHTML = `
-        (function(d,z,s){
-          s.src='https://'+d+'/400/'+z;
-          try{(document.body||document.documentElement).appendChild(s)}catch(e){}
-        })('www.highperformanceformat.com','${ZONE_SMARTLINK}',document.createElement('script'));
-      `
-      document.body.appendChild(script)
-    }
-  }, [mounted])
-
+  // Smartlink is loaded via layout.tsx script tag
   return null
 }

@@ -45,52 +45,59 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* ============================================ */}
-        {/* ADSTERRA ADS - ALL 5 ZONES                  */}
+        {/* ADSTERRA ADS - EXACT SCRIPTS FROM DASHBOARD  */}
         {/* Website: developertools.space-z.ai           */}
-        {/* Approved: 15 May 2026                        */}
         {/* ============================================ */}
 
-        {/* 1. Popunder - Zone: 29351831 (HIGHEST EARNING) */}
+        {/* 1. Banner 728x90 */}
         <Script
-          id="adsterra-popunder"
-          strategy="afterInteractive"
+          id="adsterra-banner-config"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              (function(d,z,s){s.src='https://'+d+'/400/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('www.highperformanceformat.com','29351831',document.createElement('script'));
+              atOptions = {
+                'key' : '1e8dd3e93f030e954013bb317706f109',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+              };
             `,
           }}
         />
-
-        {/* 2. Banner 728x90 - Zone: 29351833 */}
         <Script
-          id="adsterra-banner"
-          src="https://www.highperformanceformat.com/29351833/invoke.js"
+          id="adsterra-banner-script"
+          src="https://www.highperformanceformat.com/1e8dd3e93f030e954013bb317706f109/invoke.js"
           strategy="afterInteractive"
         />
 
-        {/* 3. Native Banner - Zone: 29351832 */}
+        {/* 2. Native Banner */}
         <Script
           id="adsterra-native"
-          src="https://www.highperformanceformat.com/29351832/invoke.js"
+          src="https://pl29452331.profitablecpmratenetwork.com/79d0c5ec789aea30f7ce3791e4539308/invoke.js"
+          strategy="afterInteractive"
+          async
+        />
+
+        {/* 3. Popunder (HIGHEST EARNING!) */}
+        <Script
+          id="adsterra-popunder"
+          src="https://pl29452330.profitablecpmratenetwork.com/15/86/0a/15860a0f7c9e80579176284af1f29357.js"
           strategy="afterInteractive"
         />
 
-        {/* 4. Social Bar (Sticky Mobile) - Zone: 29351834 */}
+        {/* 4. Social Bar (Sticky Mobile) */}
         <Script
           id="adsterra-social-bar"
-          src="https://www.highperformanceformat.com/29351834/invoke.js"
+          src="https://pl29452333.profitablecpmratenetwork.com/7a/15/43/7a1543bcf86b12c60dad53cf5e92b94a.js"
           strategy="afterInteractive"
         />
 
-        {/* 5. Smartlink - Zone: 29351835 */}
+        {/* 5. Smartlink */}
         <Script
           id="adsterra-smartlink"
+          src="https://www.profitablecpmratenetwork.com/jqumwent2?key=44dfac2e953684f89a0aa8612ebb89ec"
           strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(d,z,s){s.src='https://'+d+'/400/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('www.highperformanceformat.com','29351835',document.createElement('script'));
-            `,
-          }}
         />
       </head>
       <body
