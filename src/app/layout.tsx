@@ -44,14 +44,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Adsterra Popunder */}
+        {/* Adsterra Popunder - Zone 29351831 */}
         <Script id="ad-popunder" src="https://pl29452330.profitablecpmratenetwork.com/15/86/0a/15860a0f7c9e80579176284af1f29357.js" strategy="afterInteractive" />
-        {/* Adsterra Social Bar */}
+        {/* Adsterra Social Bar - Zone 29351833 */}
         <Script id="ad-social-bar" src="https://pl29452333.profitablecpmratenetwork.com/7a/15/43/7a1543bcf86b12c60dad53cf5e92b94a.js" strategy="afterInteractive" />
-        {/* Adsterra Smartlink */}
+        {/* Adsterra Smartlink - Zone 29351835 */}
         <Script id="ad-smartlink" src="https://www.profitablecpmratenetwork.com/jqumwent2?key=44dfac2e953684f89a0aa8612ebb89ec" strategy="afterInteractive" />
-        {/* Ad Loader - loads banner/native ads into their containers */}
-        <Script id="ad-loader" src="/adsterra/ad-loader.js" strategy="afterInteractive" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
