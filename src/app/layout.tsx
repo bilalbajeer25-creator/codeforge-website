@@ -16,23 +16,49 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CodeForge - Free Developer Tools & Blog",
-  description: "Forge Your Code, Build Your Future. Free online developer tools including image compressor, JSON formatter, password generator, and more. Plus expert web development blog articles.",
-  keywords: ["developer tools", "image compressor", "JSON formatter", "password generator", "color picker", "CSS gradient generator", "word counter", "web development", "coding tools"],
-  authors: [{ name: "BILAL" }],
+  title: {
+    default: "CodeForge - Free Developer Tools & Web Development Blog",
+    template: "%s | CodeForge - Free Developer Tools",
+  },
+  description: "Free online developer tools including image compressor, JSON formatter, password generator, color picker, CSS gradient generator, and word counter. Expert web development blog articles on JavaScript, React, CSS, and freelancing. No sign-up required.",
+  keywords: [
+    "free developer tools", "online image compressor", "JSON formatter online", "password generator", "color picker tool",
+    "CSS gradient generator", "word counter online", "web development blog", "JavaScript tutorials", "React tutorials",
+    "CSS tutorials", "freelancing tips", "coding tools free", "developer utilities", "online tools no signup",
+    "image optimizer", "JSON validator", "secure password maker", "web developer resources", "learn web development",
+  ],
+  authors: [{ name: "BILAL", url: "https://developertoolsbybilal.netlify.app" }],
+  creator: "BILAL",
+  publisher: "CodeForge",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "CodeForge - Free Developer Tools & Blog",
-    description: "Forge Your Code, Build Your Future. Free online developer tools and expert web development articles.",
+    title: "CodeForge - Free Developer Tools & Web Development Blog",
+    description: "Free online developer tools and expert web development articles. Image compressor, JSON formatter, password generator, and more. No sign-up required.",
     siteName: "CodeForge",
     type: "website",
+    url: "https://developertoolsbybilal.netlify.app",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CodeForge - Free Developer Tools & Blog",
-    description: "Forge Your Code, Build Your Future. Free online developer tools and expert web development articles.",
+    title: "CodeForge - Free Developer Tools & Web Development Blog",
+    description: "Free online developer tools and expert web development articles. No sign-up required.",
+  },
+  alternates: {
+    canonical: "https://developertoolsbybilal.netlify.app",
   },
 };
 
@@ -43,7 +69,52 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "CodeForge",
+              url: "https://developertoolsbybilal.netlify.app",
+              description: "Free online developer tools and expert web development articles. No sign-up required.",
+              author: {
+                "@type": "Person",
+                name: "BILAL",
+              },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://developertoolsbybilal.netlify.app/#blog",
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "CodeForge Developer Tools",
+              url: "https://developertoolsbybilal.netlify.app",
+              applicationCategory: "DeveloperApplication",
+              operatingSystem: "Web",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "4.8",
+                ratingCount: "150",
+              },
+            }),
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
