@@ -60,6 +60,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://developertoolsbybilal.netlify.app",
   },
+  verification: {
+    google: "CwI9tyzNY0s6wHoLtMHOGkgYb6gvaTlJr9JnprLn5pk",
+  },
 };
 
 export default function RootLayout({
@@ -70,6 +73,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="CwI9tyzNY0s6wHoLtMHOGkgYb6gvaTlJr9JnprLn5pk" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
