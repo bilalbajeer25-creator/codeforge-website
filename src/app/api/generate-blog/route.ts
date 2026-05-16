@@ -114,45 +114,104 @@ function safeJsonParse(text: string): any {
 
   let jsonStr = match[0]
 
-  // Fix common issues:
-  // 1. Remove control characters (newlines, tabs inside strings)
-  jsonStr = jsonStr.replace(/[\x00-\x1f]/g, (char) => {
-    if (char === '\n' || char === '\r' || char === '\t') return ''
-    return ''
-  })
+  // Strategy 1: Fix the JSON string by replacing control chars inside string values
+  // Split by quote pairs and only fix inside string values
+  const parts: string[] = []
+  let inString = false
+  let current = ""
+  let escapeNext = false
 
-  // 2. Fix unescaped newlines in string values
-  // Replace literal newlines between quotes
-  jsonStr = jsonStr.replace(/"([^"]*)"/g, (match, content) => {
-    const fixed = content
-      .replace(/\n/g, ' ')
-      .replace(/\r/g, '')
-      .replace(/\t/g, ' ')
-      .replace(/\\/g, '\\\\')
-    return `"${fixed}"`
-  })
+  for (let i = 0; i < jsonStr.length; i++) {
+    const ch = jsonStr[i]
+
+    if (escapeNext) {
+      current += ch
+      escapeNext = false
+      continue
+    }
+
+    if (ch === '\\') {
+      current += ch
+      escapeNext = true
+      continue
+    }
+
+    if (ch === '"') {
+      if (inString) {
+        // Closing a string - fix control chars in it
+        current = current.replace(/[\x00-\x1f]/g, (c) => {
+          if (c === '\n') return ' '
+          if (c === '\r') return ''
+          if (c === '\t') return ' '
+          return ''
+        })
+        parts.push('"' + current + '"')
+        current = ""
+        inString = false
+      } else {
+        // Opening a string
+        parts.push(current)
+        current = ""
+        inString = true
+      }
+    } else {
+      current += ch
+    }
+  }
+  if (current) parts.push(current)
+
+  const fixedJson = parts.join('')
 
   try {
-    return JSON.parse(jsonStr)
-  } catch {
-    // Last resort: try to extract fields manually with regex
+    return JSON.parse(fixedJson)
+  } catch (e1) {
+    // Strategy 2: Aggressive cleanup - remove all control chars entirely
     try {
-      const titleMatch = jsonStr.match(/"title"\s*:\s*"([^"]*)"/)
-      const excerptMatch = jsonStr.match(/"excerpt"\s*:\s*"([^"]*)"/)
-      const categoryMatch = jsonStr.match(/"category"\s*:\s*"([^"]*)"/)
-      const readTimeMatch = jsonStr.match(/"readTime"\s*:\s*"([^"]*)"/)
-      const contentMatch = jsonStr.match(/"content"\s*:\s*"([\s\S]*?)"\s*(?:,\s*"category"|}$)/)
+      const aggressive = jsonStr
+        .replace(/[\x00-\x1f]/g, ' ')
+        .replace(/\s+/g, ' ')
+      const m2 = aggressive.match(/\{[\s\S]*\}/)
+      if (m2) return JSON.parse(m2[0])
+    } catch {}
 
-      if (titleMatch && contentMatch) {
+    // Strategy 3: Extract fields manually with regex
+    try {
+      const titleMatch = jsonStr.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/)
+      const excerptMatch = jsonStr.match(/"excerpt"\s*:\s*"((?:[^"\\]|\\.)*)"/)
+      const categoryMatch = jsonStr.match(/"category"\s*:\s*"((?:[^"\\]|\\.)*)"/)
+      const readTimeMatch = jsonStr.match(/"readTime"\s*:\s*"((?:[^"\\]|\\.)*)"/)
+
+      // Content is the big one - grab everything between "content": " and the last " before category
+      const contentStartMatch = jsonStr.match(/"content"\s*:\s*"([\s\S]*)/)
+      let contentVal = ""
+      if (contentStartMatch) {
+        let raw = contentStartMatch[1]
+        // Find the end - look for ", "category" or "}" pattern
+        const endMatch = raw.match(/"[\s,]*((?:"category")|(?:"readTime")|(\s*}))$/)
+        if (endMatch) {
+          contentVal = raw.substring(0, endMatch.index)
+        } else {
+          contentVal = raw.replace(/"\s*\}?\s*$/, '')
+        }
+        contentVal = contentVal
+          .replace(/\\n/g, ' ')
+          .replace(/\\'/g, "'")
+          .replace(/\\"/g, '"')
+          .replace(/\\\\/g, '\\')
+          .replace(/[\x00-\x1f]/g, ' ')
+      }
+
+      if (titleMatch && contentVal) {
         return {
-          title: titleMatch[1],
-          excerpt: excerptMatch?.[1] || titleMatch[1],
-          content: contentMatch[1].replace(/\\n/g, ' ').replace(/\\"/g, '"'),
-          category: categoryMatch?.[1] || "Web Development",
+          title: titleMatch[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+          excerpt: (excerptMatch?.[1] || titleMatch[1]).replace(/\\"/g, '"').replace(/\\\\/g, '\\'),
+          content: contentVal,
+          category: categoryMatch?.[1]?.replace(/\\"/g, '"') || "Web Development",
           readTime: readTimeMatch?.[1] || "8 min",
         }
       }
     } catch {}
+
     return null
   }
 }
