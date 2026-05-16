@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { generateTemplateBlog } from "@/lib/blog-templates"
 
 // Blog topics pool - ensures variety
 const BLOG_TOPICS = [
@@ -115,7 +116,6 @@ function safeJsonParse(text: string): any {
   let jsonStr = match[0]
 
   // Strategy 1: Fix the JSON string by replacing control chars inside string values
-  // Split by quote pairs and only fix inside string values
   const parts: string[] = []
   let inString = false
   let current = ""
@@ -138,7 +138,6 @@ function safeJsonParse(text: string): any {
 
     if (ch === '"') {
       if (inString) {
-        // Closing a string - fix control chars in it
         current = current.replace(/[\x00-\x1f]/g, (c) => {
           if (c === '\n') return ' '
           if (c === '\r') return ''
@@ -149,7 +148,6 @@ function safeJsonParse(text: string): any {
         current = ""
         inString = false
       } else {
-        // Opening a string
         parts.push(current)
         current = ""
         inString = true
@@ -165,7 +163,6 @@ function safeJsonParse(text: string): any {
   try {
     return JSON.parse(fixedJson)
   } catch (e1) {
-    // Strategy 2: Aggressive cleanup - remove all control chars entirely
     try {
       const aggressive = jsonStr
         .replace(/[\x00-\x1f]/g, ' ')
@@ -174,19 +171,16 @@ function safeJsonParse(text: string): any {
       if (m2) return JSON.parse(m2[0])
     } catch {}
 
-    // Strategy 3: Extract fields manually with regex
     try {
       const titleMatch = jsonStr.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/)
       const excerptMatch = jsonStr.match(/"excerpt"\s*:\s*"((?:[^"\\]|\\.)*)"/)
       const categoryMatch = jsonStr.match(/"category"\s*:\s*"((?:[^"\\]|\\.)*)"/)
       const readTimeMatch = jsonStr.match(/"readTime"\s*:\s*"((?:[^"\\]|\\.)*)"/)
 
-      // Content is the big one - grab everything between "content": " and the last " before category
       const contentStartMatch = jsonStr.match(/"content"\s*:\s*"([\s\S]*)/)
       let contentVal = ""
       if (contentStartMatch) {
         let raw = contentStartMatch[1]
-        // Find the end - look for ", "category" or "}" pattern
         const endMatch = raw.match(/"[\s,]*((?:"category")|(?:"readTime")|(\s*}))$/)
         if (endMatch) {
           contentVal = raw.substring(0, endMatch.index)
@@ -220,10 +214,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}))
     const requestedCategory = body.category || ""
-    const requestedTopic = body.topic || ""
 
     let category = requestedCategory
-    let topic = requestedTopic
+    let topic = ""
 
     if (!topic) {
       if (category) {
@@ -244,41 +237,65 @@ export async function POST(request: NextRequest) {
 
     if (!category) category = "Web Development"
 
-    const ZAI = (await import("z-ai-web-dev-sdk")).default
-    const zai = await ZAI.create()
+    // Try AI generation first (works in development environment)
+    try {
+      const ZAI = (await import("z-ai-web-dev-sdk")).default
+      const zai = await ZAI.create()
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert web development blogger. You write detailed, unique, engaging technical articles. You MUST respond with ONLY a valid JSON object. No markdown code fences. No extra text. The JSON keys: title, excerpt, content, category, readTime. Content must be HTML string. Be unique every time."
-        },
-        {
-          role: "user",
-          content: `Write a detailed blog about: "${topic}"\nCategory: ${category}\n\nRequirements: 1500-2500 words HTML content with h2 h3 p code pre ul li strong em tags. Include code examples. 3-5 sentences per paragraph. Unique insights. readTime based on word count.\n\nRespond ONLY with valid JSON: {"title":"...","excerpt":"...","content":"<h2>...</h2><p>...</p>","category":"${category}","readTime":"X min"}`
+      const completion = await zai.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert web development blogger. You write detailed, unique, engaging technical articles. You MUST respond with ONLY a valid JSON object. No markdown code fences. No extra text. The JSON keys: title, excerpt, content, category, readTime. Content must be HTML string. Be unique every time."
+          },
+          {
+            role: "user",
+            content: `Write a detailed blog about: "${topic}"\nCategory: ${category}\n\nRequirements: 1500-2500 words HTML content with h2 h3 p code pre ul li strong em tags. Include code examples. 3-5 sentences per paragraph. Unique insights. readTime based on word count.\n\nRespond ONLY with valid JSON: {"title":"...","excerpt":"...","content":"<h2>...</h2><p>...</p>","category":"${category}","readTime":"X min"}`
+          }
+        ],
+        temperature: 0.95,
+        max_tokens: 4000,
+      })
+
+      const responseText = completion.choices?.[0]?.message?.content || ""
+
+      if (responseText) {
+        const blogData = safeJsonParse(responseText)
+        if (blogData && blogData.title && blogData.content) {
+          const slug = blogData.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "")
+            .substring(0, 60) + "-" + Date.now().toString(36)
+
+          const today = new Date()
+          const dateStr = today.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+
+          const blog = {
+            id: slug,
+            title: blogData.title,
+            excerpt: blogData.excerpt || blogData.title,
+            date: dateStr,
+            category: blogData.category || category,
+            readTime: blogData.readTime || `${Math.ceil(String(blogData.content).split(/\s+/).length / 200)} min`,
+            content: blogData.content,
+          }
+
+          return NextResponse.json({ success: true, blog, source: "ai" })
         }
-      ],
-      temperature: 0.95,
-      max_tokens: 4000,
-    })
-
-    const responseText = completion.choices?.[0]?.message?.content || ""
-
-    if (!responseText) {
-      return NextResponse.json({ error: "AI returned empty response" }, { status: 500 })
+      }
+    } catch (aiError) {
+      console.log("AI generation unavailable, using template fallback:", (aiError as Error).message)
     }
 
-    const blogData = safeJsonParse(responseText)
+    // Fallback: Template-based blog generation (works everywhere, including Netlify)
+    const templateBlog = generateTemplateBlog(category || undefined)
 
-    if (!blogData || !blogData.title || !blogData.content) {
-      console.error("Failed to parse AI response. Raw:", responseText.substring(0, 300))
-      return NextResponse.json(
-        { error: "Could not parse AI response. Please try again." },
-        { status: 500 }
-      )
-    }
-
-    const slug = blogData.title
+    const slug = templateBlog.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "")
@@ -293,15 +310,15 @@ export async function POST(request: NextRequest) {
 
     const blog = {
       id: slug,
-      title: blogData.title,
-      excerpt: blogData.excerpt || blogData.title,
+      title: templateBlog.title,
+      excerpt: templateBlog.excerpt,
       date: dateStr,
-      category: blogData.category || category,
-      readTime: blogData.readTime || `${Math.ceil(String(blogData.content).split(/\s+/).length / 200)} min`,
-      content: blogData.content,
+      category: templateBlog.category,
+      readTime: templateBlog.readTime,
+      content: templateBlog.content,
     }
 
-    return NextResponse.json({ success: true, blog })
+    return NextResponse.json({ success: true, blog, source: "template" })
   } catch (error: any) {
     console.error("Blog generation error:", error)
     return NextResponse.json(
