@@ -23,6 +23,15 @@ const AD_SCRIPTS = [
   },
 ]
 
+// Monetag ad scripts
+const MONETAG_SCRIPTS = [
+  {
+    id: "monetag-push-11013630",
+    src: "https://5gvci.com/act/files/tag.min.js?z=11013630",
+    cfasync: false,
+  },
+]
+
 export function AdsterraScripts() {
   React.useEffect(() => {
     AD_SCRIPTS.forEach((ad) => {
@@ -56,9 +65,27 @@ export function AdsterraScripts() {
       container.appendChild(invokeScript)
     })
 
+    // Monetag scripts
+    MONETAG_SCRIPTS.forEach((ad) => {
+      if (document.getElementById(ad.id)) return
+
+      const script = document.createElement("script")
+      script.id = ad.id
+      script.src = ad.src
+      script.async = true
+      if (ad.cfasync === false) {
+        script.setAttribute("data-cfasync", "false")
+      }
+      document.head.appendChild(script)
+    })
+
     return () => {
       // Cleanup on unmount
       AD_SCRIPTS.forEach((ad) => {
+        const el = document.getElementById(ad.id)
+        if (el) el.remove()
+      })
+      MONETAG_SCRIPTS.forEach((ad) => {
         const el = document.getElementById(ad.id)
         if (el) el.remove()
       })
