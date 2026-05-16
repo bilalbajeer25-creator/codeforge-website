@@ -34,6 +34,10 @@ export const metadata: Metadata = {
     title: "CodeForge - Free Developer Tools & Blog",
     description: "Forge Your Code, Build Your Future. Free online developer tools and expert web development articles.",
   },
+  other: {
+    "google-site-verification": "CwI9tyzNY0s6wHoLtMHOGkgYb6gvaTlJr9JnprLn5pk",
+    "monetag": "9f4ea4a772acf70f91f319866785c509",
+  },
 };
 
 export default function RootLayout({
