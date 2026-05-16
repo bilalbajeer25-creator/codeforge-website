@@ -123,12 +123,13 @@ export function AdminPage({ onNavigate }: AdminPageProps) {
   const handleGenerateBlog = async () => {
     setGenerating(true)
     try {
+      const cat = selectedCategory && selectedCategory !== "any" ? selectedCategory : ""
+
+      // Use the API route for AI blog generation
       const response = await fetch("/api/generate-blog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category: selectedCategory || undefined,
-        }),
+        body: JSON.stringify({ category: cat || undefined }),
       })
 
       const data = await response.json()
@@ -139,10 +140,14 @@ export function AdminPage({ onNavigate }: AdminPageProps) {
         return
       }
 
-      // Save to Firestore
-      await addBlog(data.blog)
-      showToast("success", `Blog generated: "${data.blog.title}"`)
-      loadBlogs()
+      if (data.blog) {
+        // Save to Firestore
+        await addBlog(data.blog)
+        showToast("success", `Blog generated: "${data.blog.title}"`)
+        loadBlogs()
+      } else {
+        showToast("error", "No blog data received. Try again.")
+      }
     } catch (error: any) {
       showToast("error", error.message || "Failed to generate blog")
     }
