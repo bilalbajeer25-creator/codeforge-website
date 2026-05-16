@@ -23,11 +23,21 @@ const AD_SCRIPTS = [
   },
 ]
 
-// Monetag ad scripts
+// Monetag ad scripts (3 Push zones for maximum earning)
 const MONETAG_SCRIPTS = [
   {
     id: "monetag-push-11013630",
     src: "https://5gvci.com/act/files/tag.min.js?z=11013630",
+    cfasync: false,
+  },
+  {
+    id: "monetag-push-11013418",
+    src: "https://5gvci.com/act/files/tag.min.js?z=11013418",
+    cfasync: false,
+  },
+  {
+    id: "monetag-push-11013421",
+    src: "https://5gvci.com/act/files/tag.min.js?z=11013421",
     cfasync: false,
   },
 ]
