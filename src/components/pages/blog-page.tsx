@@ -1,13 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { Search, Calendar, Tag, ArrowRight } from "lucide-react"
+import { Search, Calendar, Tag, ArrowRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import type { PageName } from "@/components/site-header"
-import { blogPosts } from "@/lib/blog-data"
+import { blogPosts as staticPosts, type BlogPost } from "@/lib/blog-data"
+import { getAllBlogs } from "@/lib/blog-service"
 import { AdBanner, SidebarAd } from "@/components/ad-components"
 
 interface BlogPageProps {
@@ -19,8 +20,27 @@ const categories = ["All", "Web Development", "JavaScript", "CSS & Design", "Rea
 export function BlogPage({ onNavigate }: BlogPageProps) {
   const [activeCategory, setActiveCategory] = React.useState("All")
   const [search, setSearch] = React.useState("")
+  const [allPosts, setAllPosts] = React.useState<BlogPost[]>(staticPosts)
+  const [loading, setLoading] = React.useState(true)
 
-  const filteredPosts = blogPosts.filter((post) => {
+  // Load blogs from Firestore on mount
+  React.useEffect(() => {
+    let mounted = true
+    async function load() {
+      try {
+        const blogs = await getAllBlogs()
+        if (mounted) setAllPosts(blogs)
+      } catch (error) {
+        console.error("Error loading blogs:", error)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+    load()
+    return () => { mounted = false }
+  }, [])
+
+  const filteredPosts = allPosts.filter((post) => {
     const matchesCategory = activeCategory === "All" || post.category === activeCategory
     const matchesSearch =
       post.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -28,7 +48,7 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
     return matchesCategory && matchesSearch
   })
 
-  const recentPosts = blogPosts.slice(0, 5)
+  const recentPosts = allPosts.slice(0, 5)
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-10 md:py-16">
@@ -73,44 +93,52 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
               ))}
             </div>
 
-            {/* Blog Posts */}
-            <div className="space-y-6">
-              {filteredPosts.map((post) => (
-                <Card key={post.id} className="group hover:shadow-lg transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <Badge variant="secondary" className="text-xs">{post.category}</Badge>
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
-                        {post.date}
-                      </span>
-                      <span className="text-xs text-muted-foreground">· {post.readTime} read</span>
-                    </div>
-                    <CardTitle className="text-xl group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
-                      {post.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm leading-relaxed mt-1">
-                      {post.excerpt}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardFooter>
-                    <Button
-                      variant="ghost"
-                      className="text-emerald-600 dark:text-emerald-400 p-0 h-auto font-medium"
-                      onClick={() => onNavigate(`blog-post-${post.id}` as PageName)}
-                    >
-                      Read More <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+            {/* Loading State */}
+            {loading ? (
+              <div className="text-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-600" />
+                <p className="mt-2 text-muted-foreground">Loading articles...</p>
+              </div>
+            ) : (
+              /* Blog Posts */
+              <div className="space-y-6">
+                {filteredPosts.map((post) => (
+                  <Card key={post.id} className="group hover:shadow-lg transition-all duration-300">
+                    <CardHeader>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <Badge variant="secondary" className="text-xs">{post.category}</Badge>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Calendar className="h-3 w-3" />
+                          {post.date}
+                        </span>
+                        <span className="text-xs text-muted-foreground">· {post.readTime} read</span>
+                      </div>
+                      <CardTitle className="text-xl group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
+                        {post.title}
+                      </CardTitle>
+                      <CardDescription className="text-sm leading-relaxed mt-1">
+                        {post.excerpt}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                      <Button
+                        variant="ghost"
+                        className="text-emerald-600 dark:text-emerald-400 p-0 h-auto font-medium"
+                        onClick={() => onNavigate(`blog-post-${post.id}` as PageName)}
+                      >
+                        Read More <ArrowRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
 
-              {filteredPosts.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No articles found matching your search.</p>
-                </div>
-              )}
-            </div>
+                {filteredPosts.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">No articles found matching your search.</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -126,7 +154,7 @@ export function BlogPage({ onNavigate }: BlogPageProps) {
               <CardContent>
                 <ul className="space-y-2">
                   {categories.filter(c => c !== "All").map((cat) => {
-                    const count = blogPosts.filter(p => p.category === cat).length
+                    const count = allPosts.filter(p => p.category === cat).length
                     return (
                       <li key={cat}>
                         <button

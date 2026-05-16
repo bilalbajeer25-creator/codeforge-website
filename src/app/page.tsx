@@ -12,6 +12,7 @@ import { ContactPage } from "@/components/pages/contact-page"
 import { PrivacyPage } from "@/components/pages/privacy-page"
 import { TermsPage } from "@/components/pages/terms-page"
 import { DisclaimerPage } from "@/components/pages/disclaimer-page"
+import { AdminPage } from "@/components/pages/admin-page"
 import { ImageCompressor } from "@/components/tools/image-compressor"
 import { WordCounter } from "@/components/tools/word-counter"
 import { JsonFormatter } from "@/components/tools/json-formatter"
@@ -21,7 +22,7 @@ import { CssGradientGenerator } from "@/components/tools/css-gradient-generator"
 import { StickyAd, AdsterraPopunder, AdsterraSmartlink } from "@/components/ad-components"
 
 const staticPages: string[] = [
-  "home", "tools", "blog", "about", "contact",
+  "home", "tools", "blog", "about", "contact", "admin",
   "privacy", "terms", "disclaimer",
   "image-compressor", "word-counter", "json-formatter",
   "password-generator", "color-picker", "css-gradient-generator",
@@ -83,6 +84,8 @@ export default function Home() {
         return <ToolsPage onNavigate={navigate} />
       case "blog":
         return <BlogPage onNavigate={navigate} />
+      case "admin":
+        return <AdminPage onNavigate={navigate} />
       case "about":
         return <AboutPage onNavigate={navigate} />
       case "contact":
@@ -113,18 +116,21 @@ export default function Home() {
   // Determine which nav item should be highlighted
   const activeNavPage = currentPage.startsWith("blog-post-") ? "blog" : currentPage
 
+  // Admin page doesn't show header/footer
+  const isAdmin = currentPage === "admin"
+
   return (
     <div className="min-h-screen flex flex-col">
-      <SiteHeader currentPage={activeNavPage} onNavigate={navigate} />
+      {!isAdmin && <SiteHeader currentPage={activeNavPage as PageName} onNavigate={navigate} />}
       <main className={`flex-1 transition-opacity duration-150 ${isTransitioning ? "opacity-0" : "opacity-100"}`}>
         {renderPage()}
       </main>
-      <SiteFooter onNavigate={navigate} />
+      {!isAdmin && <SiteFooter onNavigate={navigate} />}
       {/* Adsterra Social Bar - Mobile Sticky */}
       <StickyAd />
-      {/* Adsterra Popunder - Zone: 29351831 (highest earning!) */}
+      {/* Adsterra Popunder */}
       <AdsterraPopunder />
-      {/* Adsterra Smartlink - Zone: 29351835 */}
+      {/* Adsterra Smartlink */}
       <AdsterraSmartlink />
     </div>
   )

@@ -1,12 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { ArrowLeft, Calendar, Clock, Tag } from "lucide-react"
+import { ArrowLeft, Calendar, Clock, Tag, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import type { PageName } from "@/components/site-header"
-import { blogPosts } from "@/lib/blog-data"
+import { blogPosts as staticPosts, type BlogPost } from "@/lib/blog-data"
+import { getBlogById, getAllBlogs } from "@/lib/blog-service"
 import { AdBanner, InArticleAd } from "@/components/ad-components"
 
 interface BlogPostPageProps {
@@ -15,7 +16,46 @@ interface BlogPostPageProps {
 }
 
 export function BlogPostPage({ postId, onNavigate }: BlogPostPageProps) {
-  const post = blogPosts.find((p) => p.id === postId)
+  const [post, setPost] = React.useState<BlogPost | null>(null)
+  const [relatedPosts, setRelatedPosts] = React.useState<BlogPost[]>([])
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    let mounted = true
+    async function load() {
+      try {
+        // Try to find in Firestore first
+        const blog = await getBlogById(postId)
+        if (mounted) {
+          setPost(blog)
+          // Load all blogs for related posts
+          const allBlogs = await getAllBlogs()
+          const related = allBlogs
+            .filter((p) => p.category === blog?.category && p.id !== postId)
+            .slice(0, 3)
+          setRelatedPosts(related)
+        }
+      } catch (error) {
+        console.error("Error loading blog post:", error)
+        // Fallback to static
+        const staticPost = staticPosts.find((p) => p.id === postId) || null
+        if (mounted) setPost(staticPost)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+    load()
+    return () => { mounted = false }
+  }, [postId])
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 md:px-6 py-20 text-center">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-600" />
+        <p className="mt-2 text-muted-foreground">Loading article...</p>
+      </div>
+    )
+  }
 
   if (!post) {
     return (
@@ -28,10 +68,6 @@ export function BlogPostPage({ postId, onNavigate }: BlogPostPageProps) {
       </div>
     )
   }
-
-  const relatedPosts = blogPosts
-    .filter((p) => p.category === post.category && p.id !== post.id)
-    .slice(0, 3)
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-10 md:py-16">

@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  /* config options here */
+  // output: "export" removed - API routes needed for AI blog generation
   typescript: {
     ignoreBuildErrors: true,
   },
