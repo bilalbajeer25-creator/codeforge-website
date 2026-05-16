@@ -9,17 +9,17 @@ import * as React from "react"
 // AND doesn't require separate HTML files to be deployed
 // ============================================================
 
-// Banner 728x90 HTML (Adsterra key: 1e8dd3e93f030e954013bb317706f109)
-const BANNER_728x90_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script>atOptions={'key':'1e8dd3e93f030e954013bb317706f109','format':'iframe','height':90,'width':728,'params':{}};</script><script src="https://www.highperformanceformat.com/1e8dd3e93f030e954013bb317706f109/invoke.js"></script></body></html>`
+// Banner 728x90 HTML (Adsterra key: 2bcef742f07a8ca1e46ada9ce12a38d5)
+const BANNER_728x90_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script>atOptions={'key':'2bcef742f07a8ca1e46ada9ce12a38d5','format':'iframe','height':90,'width':728,'params':{}};</script><script src="https://www.highperformanceformat.com/2bcef742f07a8ca1e46ada9ce12a38d5/invoke.js"></script></body></html>`
 
 // Banner 300x250 HTML (same key, different dimensions)
-const BANNER_300x250_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script>atOptions={'key':'1e8dd3e93f030e954013bb317706f109','format':'iframe','height':250,'width':300,'params':{}};</script><script src="https://www.highperformanceformat.com/1e8dd3e93f030e954013bb317706f109/invoke.js"></script></body></html>`
+const BANNER_300x250_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script>atOptions={'key':'2bcef742f07a8ca1e46ada9ce12a38d5','format':'iframe','height':250,'width':300,'params':{}};</script><script src="https://www.highperformanceformat.com/2bcef742f07a8ca1e46ada9ce12a38d5/invoke.js"></script></body></html>`
 
 // Banner 300x600 HTML (same key, sidebar dimensions)
-const BANNER_300x600_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script>atOptions={'key':'1e8dd3e93f030e954013bb317706f109','format':'iframe','height':600,'width':300,'params':{}};</script><script src="https://www.highperformanceformat.com/1e8dd3e93f030e954013bb317706f109/invoke.js"></script></body></html>`
+const BANNER_300x600_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script>atOptions={'key':'2bcef742f07a8ca1e46ada9ce12a38d5','format':'iframe','height':600,'width':300,'params':{}};</script><script src="https://www.highperformanceformat.com/2bcef742f07a8ca1e46ada9ce12a38d5/invoke.js"></script></body></html>`
 
-// Native Banner HTML (Adsterra key: 79d0c5ec789aea30f7ce3791e4539308)
-const NATIVE_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script async="async" data-cfasync="false" src="https://pl29452331.profitablecpmratenetwork.com/79d0c5ec789aea30f7ce3791e4539308/invoke.js"></script><div id="container-79d0c5ec789aea30f7ce3791e4539308"></div></body></html>`
+// Native Banner HTML (Adsterra key: b94ec979762f7b8f40c4033b13c7ad1f) - 320x50
+const NATIVE_HTML = `<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body><script>atOptions={'key':'b94ec979762f7b8f40c4033b13c7ad1f','format':'iframe','height':50,'width':320,'params':{}};</script><script src="https://www.highperformanceformat.com/b94ec979762f7b8f40c4033b13c7ad1f/invoke.js"></script></body></html>`
 
 interface BannerAdProps {
   format?: "728x90" | "300x250" | "300x600"
@@ -59,8 +59,8 @@ export function NativeAd({ className = "" }: NativeAdProps) {
     <div className={`w-full flex justify-center my-4 ${className}`}>
       <iframe
         srcDoc={NATIVE_HTML}
-        width={500}
-        height={300}
+        width={320}
+        height={50}
         frameBorder="0"
         scrolling="no"
         style={{ maxWidth: "100%", border: "none", overflow: "hidden" }}
