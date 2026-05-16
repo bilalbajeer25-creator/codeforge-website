@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeForge Admin Panel</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#f1f5f9;--muted:#94a3b8;--accent:#10b981;--accent-hover:#059669;--danger:#ef4444;--danger-hover:#dc2626;--input:#1e293b}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:var(--card);border-bottom:1px solid var(--border);border-radius:12px;margin-bottom:24px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px;color:white}
+.logo-text h1{font-size:20px;font-weight:700;color:var(--text)}
+.logo-text span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px}
+.btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-danger{background:var(--danger);color:white}
+.btn-danger:hover{background:var(--danger-hover)}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--card);color:var(--text)}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center}
+.login-card .icon{width:64px;height:64px;background:rgba(16,185,129,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
+.login-card h2{margin-bottom:8px;font-size:24px}
+.login-card p{color:var(--muted);margin-bottom:24px;font-size:14px}
+.login-card input{width:100%;padding:12px 16px;background:var(--input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;outline:none;margin-bottom:12px}
+.login-card input:focus{border-color:var(--accent)}
+.login-error{color:var(--danger);font-size:13px;margin-bottom:12px;display:none}
+
+/* Dashboard */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:center;gap:16px}
+.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.stat-icon.green{background:rgba(16,185,129,0.1);color:var(--accent)}
+.stat-icon.blue{background:rgba(59,130,246,0.1);color:#3b82f6}
+.stat-icon.purple{background:rgba(139,92,246,0.1);color:#8b5cf6}
+.stat-info p:first-child{font-size:24px;font-weight:700}
+.stat-info p:last-child{font-size:13px;color:var(--muted)}
+
+/* Generator Card */
+.gen-card{background:var(--card);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:24px;margin-bottom:24px;background:linear-gradient(135deg,rgba(16,185,129,0.05),var(--card))}
+.gen-card h3{font-size:18px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.gen-card p{color:var(--muted);font-size:14px;margin-bottom:16px}
+.gen-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.gen-row select{padding:10px 16px;background:var(--input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;min-width:180px}
+.gen-row select option{background:var(--card)}
+.generating-msg{margin-top:12px;padding:12px;background:rgba(16,185,129,0.1);border-radius:8px;font-size:13px;color:var(--accent);display:none}
+.generating-msg.show{display:block}
+
+/* Blog List */
+.blog-list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.blog-list-header h2{font-size:18px}
+.blog-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:border-color .2s}
+.blog-card:hover{border-color:var(--accent)}
+.blog-info{flex:1;min-width:0}
+.blog-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.blog-meta .badge{padding:2px 8px;background:rgba(16,185,129,0.1);color:var(--accent);border-radius:4px;font-size:11px;font-weight:600}
+.blog-meta .badge.outline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.blog-meta .date{font-size:12px;color:var(--muted)}
+.blog-info h4{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.blog-info .excerpt{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.blog-actions{display:flex;gap:4px;flex-shrink:0}
+
+/* Editor Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg);border:1px solid var(--border);border-radius:16px;width:100%;max-width:800px;padding:24px;margin-top:20px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-header h2{font-size:20px}
+.modal-body{display:flex;flex-direction:column;gap:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 14px;background:var(--input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent)}
+.form-group textarea{min-height:400px;resize:vertical;font-family:'Courier New',monospace;font-size:13px}
+.form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.modal-footer{display:flex;gap:12px;margin-top:20px;justify-content:flex-end}
+
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:10px;color:white;font-size:14px;font-weight:500;z-index:200;transform:translateX(400px);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast.success{background:var(--accent)}
+.toast.error{background:var(--danger)}
+
+/* Empty State */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .emoji{font-size:48px;margin-bottom:16px}
+.empty h3{font-size:18px;color:var(--text);margin-bottom:8px}
+.empty p{font-size:14px}
+
+/* Responsive */
+@media(max-width:768px){
+  .form-row{grid-template-columns:1fr}
+  .blog-card{flex-direction:column;align-items:flex-start}
+  .blog-actions{width:100%;justify-content:flex-end}
+  .gen-row{flex-direction:column}
+  .gen-row select,.gen-row .btn{width:100%}
+  header{flex-direction:column;gap:12px}
+}
+
+/* Loading Spinner */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{display:flex;align-items:center;gap:8px;justify-content:center;padding:40px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Login Screen -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="icon">🛡️</div>
+    <h2>Admin Panel</h2>
+    <p>Enter password to access the dashboard</p>
+    <div id="loginError" class="login-error">Wrong password! Try again.</div>
+    <input type="password" id="passwordInput" placeholder="Enter admin password" autofocus>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="handleLogin()">Login</button>
+  </div>
+</div>
+
+<!-- Dashboard Screen -->
+<div id="dashboardScreen" style="display:none">
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">CF</div>
+        <div class="logo-text">
+          <h1>CodeForge <span style="color:var(--accent)">Admin</span></h1>
+          <span>Blog Management</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="https://developertoolsbybilal.netlify.app/#blog" target="_blank" class="btn btn-outline btn-sm">👁 View Blog</a>
+        <button class="btn btn-outline btn-sm" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-icon green">📝</div>
+        <div class="stat-info">
+          <p id="blogCount">0</p>
+          <p>AI Generated Blogs</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">♾️</div>
+        <div class="stat-info">
+          <p>Unlimited</p>
+          <p>Blog Generation</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">✨</div>
+        <div class="stat-info">
+          <p>Unique</p>
+          <p>Every Blog Different</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Generator -->
+    <div class="gen-card">
+      <h3>✨ AI Blog Generator</h3>
+      <p>Generate unique, high-quality blog posts. Each blog is different - unlimited generation!</p>
+      <div class="gen-row">
+        <select id="categorySelect">
+          <option value="">Any Category</option>
+          <option value="Web Development">Web Development</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="CSS & Design">CSS & Design</option>
+          <option value="React & Next.js">React & Next.js</option>
+          <option value="Freelancing">Freelancing</option>
+        </select>
+        <button class="btn btn-primary" id="generateBtn" onclick="handleGenerate()">✨ Generate New Blog</button>
+        <button class="btn btn-outline" onclick="openEditor()">➕ Write Manual</button>
+      </div>
+      <div id="generatingMsg" class="generating-msg">
+        <span class="spinner"></span> AI is writing a unique blog post... This takes 2-5 seconds.
+      </div>
+    </div>
+
+    <!-- Blog List -->
+    <div class="blog-list-header">
+      <h2>Generated Blogs</h2>
+      <button class="btn btn-outline btn-sm" onclick="loadBlogs()">🔄 Refresh</button>
+    </div>
+    <div id="blogList">
+      <div class="loading-text"><span class="spinner"></span> Loading blogs...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Editor Modal -->
+<div id="editorModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="editorTitle">Create New Blog</h2>
+      <button class="btn btn-outline btn-sm" onclick="closeEditor()">✕ Cancel</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="editTitle" placeholder="Blog title...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="editCategory">
+            <option value="Web Development">Web Development</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="CSS & Design">CSS & Design</option>
+            <option value="React & Next.js">React & Next.js</option>
+            <option value="Freelancing">Freelancing</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Read Time</label>
+          <input type="text" id="editReadTime" placeholder="5 min" value="5 min">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="text" id="editDate" disabled style="opacity:0.5">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Excerpt</label>
+        <textarea id="editExcerpt" rows="3" placeholder="Brief summary..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Content (HTML)</label>
+        <textarea id="editContent" rows="20" placeholder="<h2>Title</h2><p>Content...</p>"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeEditor()">Cancel</button>
+      <button class="btn btn-primary" onclick="handleSave()">💾 Save Blog</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+  apiKey: "AIzaSyAnN7cgbnFYm6OGpMngNZqPU73XfARW6YI",
+  authDomain: "codeforge-blog-67047.firebaseapp.com",
+  projectId: "codeforge-blog-67047",
+  storageBucket: "codeforge-blog-67047.firebasestorage.app",
+  messagingSenderId: "339020988394",
+  appId: "1:339020988394:web:686996433722a729043c93",
+  measurementId: "G-JWD4RQVSMQ"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const COL = "blogs";
+
+const ADMIN_PASSWORD = "CodeForge@2025";
+let editingId = null; // Firestore doc ID being edited
+let allBlogs = [];
+
+// ==================== AUTH ====================
+function handleLogin() {
+  const pw = document.getElementById('passwordInput').value;
+  if (pw === ADMIN_PASSWORD) {
+    sessionStorage.setItem('admin-session', 'logged-in');
+    showDashboard();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function handleLogout() {
+  sessionStorage.removeItem('admin-session');
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('dashboardScreen').style.display = 'none';
+  document.getElementById('passwordInput').value = '';
+}
+
+function showDashboard() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboardScreen').style.display = '';
+  loadBlogs();
+}
+
+// Auto login check
+if (sessionStorage.getItem('admin-session') === 'logged-in') {
+  showDashboard();
+}
+
+// Enter key login
+document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') handleLogin();
+});
+
+// ==================== TOAST ====================
+function showToast(type, message) {
+  const t = document.getElementById('toast');
+  t.className = 'toast ' + type + ' show';
+  t.textContent = message;
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ==================== LOAD BLOGS ====================
+async function loadBlogs() {
+  const list = document.getElementById('blogList');
+  list.innerHTML = '<div class="loading-text"><span class="spinner"></span> Loading blogs...</div>';
+  try {
+    const snap = await db.collection(COL).orderBy('createdAt', 'desc').get();
+    allBlogs = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      allBlogs.push({ ...d, firestoreId: doc.id });
+    });
+    document.getElementById('blogCount').textContent = allBlogs.length;
+    renderBlogs();
+  } catch (err) {
+    list.innerHTML = '<div class="empty"><div class="emoji">⚠️</div><h3>Error Loading Blogs</h3><p>' + err.message + '</p></div>';
+  }
+}
+
+function renderBlogs() {
+  const list = document.getElementById('blogList');
+  if (allBlogs.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="emoji">📝</div><h3>No AI Blogs Yet</h3><p>Click "Generate New Blog" above to create your first AI-powered blog post!</p></div>';
+    return;
+  }
+  list.innerHTML = allBlogs.map(blog => `
+    <div class="blog-card">
+      <div class="blog-info">
+        <div class="blog-meta">
+          <span class="badge">${blog.category || 'Web Development'}</span>
+          <span class="date">${blog.date || ''}</span>
+          <span class="date">${blog.readTime || '5 min'} read</span>
+          <span class="badge outline">AI Generated</span>
+        </div>
+        <h4>${escapeHtml(blog.title || '')}</h4>
+        <p class="excerpt">${escapeHtml(blog.excerpt || '')}</p>
+      </div>
+      <div class="blog-actions">
+        <button class="btn btn-outline btn-sm" onclick="viewBlog('${blog.id || ''}')">👁</button>
+        <button class="btn btn-outline btn-sm" onclick="editBlog('${blog.firestoreId}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBlog('${blog.firestoreId}','${escapeHtml(blog.title || '')}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ==================== GENERATE BLOG ====================
+async function handleGenerate() {
+  const btn = document.getElementById('generateBtn');
+  const msg = document.getElementById('generatingMsg');
+  const cat = document.getElementById('categorySelect').value;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Generating...';
+  msg.classList.add('show');
+
+  try {
+    const blog = generateTemplateBlog(cat || undefined);
+
+    // Save to Firestore
+    const docRef = await db.collection(COL).add({
+      ...blog,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+    showToast('success', 'Blog generated: "' + blog.title + '"');
+    loadBlogs();
+  } catch (err) {
+    showToast('error', 'Failed: ' + err.message);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✨ Generate New Blog';
+  msg.classList.remove('show');
+}
+
+// ==================== TEMPLATE BLOG GENERATOR ====================
+const INTROS = [
+  "In today's rapidly evolving digital landscape, understanding this topic is more crucial than ever. Whether you're a seasoned developer or just starting out, the concepts we'll explore will reshape how you approach your craft.",
+  "The web development world moves at breakneck speed, and staying ahead requires constant learning. This article dives deep into a subject that's gaining momentum and shows you exactly how to leverage it in your projects.",
+  "Every developer hits a point where they need to level up their skills. The techniques discussed here represent the cutting edge of modern development practices, and mastering them will set you apart from the crowd.",
+  "Building great software is both an art and a science. Today we're going to explore a topic that bridges both worlds, giving you practical tools you can apply immediately while deepening your understanding of the underlying principles.",
+  "If you've been in the development community for any length of time, you know that the best solutions often come from understanding fundamentals deeply. This guide takes you back to basics while pushing forward into advanced territory.",
+];
+
+const TIPS = [
+  "Always start with the documentation before diving into code. The official docs often contain solutions to problems you'll spend hours debugging otherwise.",
+  "Write tests before you write features. Test-driven development catches bugs early and gives you confidence that your code works as intended.",
+  "Use version control religiously. Even for small projects, Git saves you from catastrophic mistakes and enables experimentation through branching.",
+  "Automate repetitive tasks. If you find yourself doing something more than twice, write a script or use a tool to handle it automatically.",
+  "Take regular breaks during long coding sessions. Your brain consolidates learning during rest periods, and fresh eyes catch bugs faster than tired ones.",
+  "Read other people's code regularly. Open source projects are a goldmine of patterns, techniques, and architectural decisions you can learn from.",
+  "Don't optimize prematurely. Write clean, readable code first, then profile and optimize only the parts that actually need it.",
+  "Learn your editor's keyboard shortcuts. The time saved from not reaching for the mouse adds up to hours over a week.",
+];
+
+const CONCLUSIONS = [
+  "The journey of mastering these concepts is ongoing. Start by implementing one technique at a time in your projects, and gradually build up your expertise. Remember that every expert was once a beginner.",
+  "As we've explored throughout this article, the difference between good and great developers often comes down to attention to detail and willingness to learn. Apply these principles consistently, and you'll see measurable improvement.",
+  "The tools and techniques discussed here represent years of collective wisdom from the developer community. By integrating them into your workflow, you're investing in your professional growth.",
+  "Software development is a field where continuous learning isn't optional — it's essential. The concepts we've covered today will serve as building blocks for more advanced topics.",
+  "Every project is an opportunity to apply these principles and refine your skills. Pick the most impactful technique from this article, master it, and then move on to the next one.",
+];
+
+const TOPICS = {
+  "Web Development": ["Progressive Web Apps","Server-Side Rendering","Web Components","Browser APIs","Service Workers","Web Accessibility","Performance Optimization","Responsive Design","SEO Best Practices","Web Security Headers","Static Site Generation","Edge Computing","WebSocket Communication","Micro-Frontends","Design Systems","API Gateway Patterns","Web Animation"],
+  "JavaScript": ["Async/Await Patterns","Closures and Scope","Event Loop Mechanics","TypeScript Generics","Functional Programming","Module Systems","Proxy and Reflect API","Memory Management","Iterator Patterns","Web Workers","Promise Chains","Error Boundaries","Dynamic Imports","Generator Functions","WeakMap and WeakSet","Decorators"],
+  "CSS & Design": ["CSS Grid Layouts","Container Queries","CSS Custom Properties","CSS Animations","Typography Systems","Color Theory","Responsive Images","CSS Architecture","Modern Selectors","Scroll-Driven Animations","View Transitions API","CSS Nesting","Logical Properties","Subgrid Layouts","CSS Layers"],
+  "React & Next.js": ["React Server Components","Next.js App Router","State Management","Custom Hooks","React Suspense","Data Fetching Patterns","Component Libraries","Testing Strategies","SEO Optimization","Middleware Patterns","Image Optimization","Error Handling","Concurrent Features","Streaming SSR","Static Generation"],
+  "Freelancing": ["Freelance Pricing","Client Acquisition","Portfolio Building","Time Management","Contract Negotiation","Remote Work","Passive Income","Personal Branding","Project Management","Networking Strategies","Work-Life Balance","Tax Planning"],
+};
+
+const TEMPLATES = [
+  { title: "Mastering {topic}: A Comprehensive Guide for Modern Developers", sections: ["Understanding the Fundamentals","Setting Up Your Development Environment","Building Your First Project","Advanced Patterns and Techniques","Common Pitfalls and How to Avoid Them","Performance Optimization Strategies"] },
+  { title: "The Complete {topic} Handbook: From Beginner to Expert", sections: ["Why {topic} Matters in 2025","Core Concepts Explained","Real-World Implementation","Testing and Quality Assurance","Scaling for Production"] },
+  { title: "{topic} Demystified: Practical Tips Every Developer Needs", sections: ["The Problem {topic} Solves","Simple Solutions That Work","Design Patterns Worth Knowing","Mistakes I've Made So You Don't Have To"] },
+  { title: "Building With {topic}: Architecture, Patterns, and Best Practices", sections: ["Architectural Foundations","Component Design Principles","State Management Strategies","Optimization Without Over-Engineering","Deployment and DevOps Considerations"] },
+  { title: "The Developer's Guide to {topic}: Earn More and Work Smarter", sections: ["Building a Profitable Skill Set","Finding and Landing Quality Clients","Pricing Your Services Competitively","Managing Projects Like a Professional","Scaling Beyond Trading Time for Money"] },
+];
+
+const CODE_EXAMPLES = [
+  { lang:"javascript", code:"// Debounce function for performance\nfunction debounce(fn, delay = 300) {\n  let timeoutId;\n  return function (...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => fn.apply(this, args), delay);\n  };\n}\n\nconst searchInput = document.querySelector('#search');\nsearchInput.addEventListener('input', debounce((e) => {\n  fetchResults(e.target.value);\n}, 500));", explanation:"Debouncing prevents a function from being called too frequently. This is essential for search inputs, window resize handlers, and scroll events." },
+  { lang:"javascript", code:"// Intersection Observer for lazy loading\nconst observer = new IntersectionObserver((entries) => {\n  entries.forEach(entry => {\n    if (entry.isIntersecting) {\n      const img = entry.target;\n      img.src = img.dataset.src;\n      img.classList.add('loaded');\n      observer.unobserve(img);\n    }\n  });\n}, { rootMargin: '50px' });\n\ndocument.querySelectorAll('img[data-src]')\n  .forEach(img => observer.observe(img));", explanation:"The Intersection Observer API provides an efficient way to detect when elements enter the viewport. This is far more performant than listening to scroll events." },
+  { lang:"css", code:"/* Modern CSS Grid Layout */\n.dashboard {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n  gap: 1.5rem;\n  padding: 2rem;\n}\n\n.dashboard__card {\n  padding: 1.5rem;\n  border-radius: 12px;\n  background: var(--card-bg);\n}", explanation:"CSS Grid with auto-fit and minmax creates responsive layouts without media queries. The subgrid value allows child elements to align with the parent grid." },
+  { lang:"javascript", code:"// Async iterator pattern\nasync function* fetchPaginatedData(url) {\n  let page = 1;\n  let hasMore = true;\n  while (hasMore) {\n    const response = await fetch(`${url}?page=${page}`);\n    const data = await response.json();\n    yield data.items;\n    hasMore = data.hasNextPage;\n    page++;\n  }\n}\n\nfor await (const items of fetchPaginatedData('/api/posts')) {\n  renderItems(items);\n}", explanation:"Async iterators provide an elegant way to handle paginated data. The for-await-of loop automatically handles the async iteration, making complex data fetching code much cleaner." },
+  { lang:"css", code:"/* Container Queries */\n.card-container {\n  container-type: inline-size;\n  container-name: card;\n}\n\n@container card (min-width: 400px) {\n  .card {\n    display: grid;\n    grid-template-columns: 200px 1fr;\n  }\n}\n\n@container card (max-width: 399px) {\n  .card { flex-direction: column; }\n}", explanation:"Container queries let you style elements based on their container's size rather than the viewport. This is revolutionary for component-based architectures." },
+  { lang:"javascript", code:"// Custom hook pattern with error handling\nfunction useApi(url) {\n  const [data, setData] = useState(null);\n  const [error, setError] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    const controller = new AbortController();\n    async function fetchData() {\n      try {\n        const res = await fetch(url, { signal: controller.signal });\n        const json = await res.json();\n        setData(json);\n      } catch (err) {\n        if (err.name !== 'AbortError') setError(err);\n      } finally { setLoading(false); }\n    }\n    fetchData();\n    return () => controller.abort();\n  }, [url]);\n\n  return { data, error, loading };\n}", explanation:"This pattern provides type-safe data fetching with built-in abort controller support. The AbortController ensures cleanup when the component unmounts or the URL changes." },
+];
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffle(arr) { const s=[...arr]; for(let i=s.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[s[i],s[j]]=[s[j],s[i]]} return s; }
+
+function generateTemplateBlog(category) {
+  const cat = category && TOPICS[category] ? category : pick(Object.keys(TOPICS));
+  const topic = pick(TOPICS[cat]);
+  const template = pick(TEMPLATES);
+  const intro = pick(INTROS);
+  const tip1 = pick(TIPS);
+  const tip2 = pick(TIPS.filter(t => t !== tip1));
+  const conclusion = pick(CONCLUSIONS);
+  const codes = shuffle(CODE_EXAMPLES);
+
+  let html = `<p>${intro}</p>`;
+  const sections = shuffle(template.sections).slice(0, 4 + Math.floor(Math.random() * 3));
+  let ci = 0;
+
+  sections.forEach((sec, i) => {
+    html += `<h2>${sec.replace(/\{topic\}/g, topic)}</h2>`;
+    html += `<p>${intro.substring(0, 100)}... ${tip1.substring(0, 80)} Understanding ${topic.toLowerCase()} requires patience and practice, but the rewards are substantial. Developers who invest time in mastering these concepts find themselves writing cleaner code, solving problems faster, and commanding higher salaries in the marketplace.</p>`;
+
+    if (ci < codes.length && (i === 0 || i === 2 || i === sections.length - 1)) {
+      const ex = codes[ci++];
+      html += `<h3>Code Example</h3>`;
+      html += `<pre><code>${ex.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>`;
+      html += `<p><strong>Why this matters:</strong> ${ex.explanation}</p>`;
+    }
+    if (i === 1) html += `<p><strong>Pro Tip:</strong> ${tip1}</p>`;
+    if (i === 3) html += `<p><strong>Key Insight:</strong> ${tip2}</p>`;
+  });
+
+  html += `<h2>Wrapping Up</h2><p>${conclusion}</p>`;
+
+  const title = template.title.replace(/\{topic\}/g, topic);
+  const excerpt = `Discover expert techniques and best practices for ${topic.toLowerCase()} that will transform your development workflow. From fundamentals to advanced patterns, this guide covers everything you need to know.`;
+
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').substring(0,60) + '-' + Date.now().toString(36);
+  const plainText = html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  const wordCount = plainText.split(' ').length;
+
+  return {
+    id: slug,
+    title,
+    excerpt,
+    date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+    category: cat,
+    readTime: Math.max(5, Math.ceil(wordCount / 200)) + ' min',
+    content: html,
+  };
+}
+
+// ==================== BLOG OPERATIONS ====================
+function viewBlog(blogId) {
+  window.open('https://developertoolsbybilal.netlify.app/#blog-post-' + blogId, '_blank');
+}
+
+async function editBlog(firestoreId) {
+  const blog = allBlogs.find(b => b.firestoreId === firestoreId);
+  if (!blog) return;
+
+  editingId = firestoreId;
+  document.getElementById('editorTitle').textContent = 'Edit Blog';
+  document.getElementById('editTitle').value = blog.title || '';
+  document.getElementById('editCategory').value = blog.category || 'Web Development';
+  document.getElementById('editReadTime').value = blog.readTime || '5 min';
+  document.getElementById('editDate').value = blog.date || '';
+  document.getElementById('editExcerpt').value = blog.excerpt || '';
+  document.getElementById('editContent').value = blog.content || '';
+  document.getElementById('editorModal').classList.add('show');
+}
+
+function openEditor() {
+  editingId = null;
+  document.getElementById('editorTitle').textContent = 'Create New Blog';
+  document.getElementById('editTitle').value = '';
+  document.getElementById('editCategory').value = 'Web Development';
+  document.getElementById('editReadTime').value = '5 min';
+  document.getElementById('editDate').value = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  document.getElementById('editExcerpt').value = '';
+  document.getElementById('editContent').value = '';
+  document.getElementById('editorModal').classList.add('show');
+}
+
+function closeEditor() {
+  document.getElementById('editorModal').classList.remove('show');
+  editingId = null;
+}
+
+async function handleSave() {
+  const title = document.getElementById('editTitle').value;
+  const category = document.getElementById('editCategory').value;
+  const readTime = document.getElementById('editReadTime').value;
+  const excerpt = document.getElementById('editExcerpt').value;
+  const content = document.getElementById('editContent').value;
+
+  if (!title) { showToast('error', 'Title is required!'); return; }
+  if (!content) { showToast('error', 'Content is required!'); return; }
+
+  try {
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').substring(0,60);
+    const dateStr = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+    if (editingId) {
+      await db.collection(COL).doc(editingId).update({
+        title, category, readTime, excerpt, content,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      showToast('success', 'Blog updated!');
+    } else {
+      await db.collection(COL).add({
+        id: slug + '-' + Date.now().toString(36),
+        title, category, readTime, excerpt, content,
+        date: dateStr,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      showToast('success', 'Blog created!');
+    }
+    closeEditor();
+    loadBlogs();
+  } catch (err) {
+    showToast('error', 'Failed: ' + err.message);
+  }
+}
+
+async function deleteBlog(firestoreId, title) {
+  if (!confirm('Delete "' + title + '"? This cannot be undone.')) return;
+  try {
+    await db.collection(COL).doc(firestoreId).delete();
+    showToast('success', 'Blog deleted!');
+    loadBlogs();
+  } catch (err) {
+    showToast('error', 'Failed: ' + err.message);
+  }
+}
+</script>
+</body>
+</html>
