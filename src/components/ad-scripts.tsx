@@ -4,6 +4,8 @@ import * as React from "react"
 
 // Adsterra special ad scripts (Popunder, Social Bar, Smartlink)
 // These are loaded client-side only to avoid SSR issues with document.write
+// NOTE: Monetag scripts are loaded via static <head> tags in layout.tsx
+// for in-app browser compatibility (WhatsApp, Facebook, Instagram etc.)
 
 const AD_SCRIPTS = [
   {
@@ -20,37 +22,6 @@ const AD_SCRIPTS = [
     id: "adsterra-smartlink",
     key: "98e9f0d0503b840cac2081dfd778c8d0",
     type: "smartlink",
-  },
-]
-
-// Monetag ad scripts
-// Multitag (all-in-one) - covers Push + Popunder + Banner + Vignette etc.
-// Plus 3 Push zones for extra push subscription earning
-const MONETAG_SCRIPTS = [
-  // Multitag Zone 239844 - all-in-one format (BEST EARNING)
-  {
-    id: "monetag-multitag-239844",
-    src: "https://quge5.com/88/tag.min.js",
-    dataZone: "239844",
-    cfasync: false,
-  },
-  // Push Zone 11013630
-  {
-    id: "monetag-push-11013630",
-    src: "https://5gvci.com/act/files/tag.min.js?z=11013630",
-    cfasync: false,
-  },
-  // Push Zone 11013418
-  {
-    id: "monetag-push-11013418",
-    src: "https://5gvci.com/act/files/tag.min.js?z=11013418",
-    cfasync: false,
-  },
-  // Push Zone 11013421
-  {
-    id: "monetag-push-11013421",
-    src: "https://5gvci.com/act/files/tag.min.js?z=11013421",
-    cfasync: false,
   },
 ]
 
@@ -87,30 +58,9 @@ export function AdsterraScripts() {
       container.appendChild(invokeScript)
     })
 
-    // Monetag scripts
-    MONETAG_SCRIPTS.forEach((ad) => {
-      if (document.getElementById(ad.id)) return
-
-      const script = document.createElement("script")
-      script.id = ad.id
-      script.src = ad.src
-      script.async = true
-      if (ad.cfasync === false) {
-        script.setAttribute("data-cfasync", "false")
-      }
-      if (ad.dataZone) {
-        script.setAttribute("data-zone", ad.dataZone)
-      }
-      document.head.appendChild(script)
-    })
-
     return () => {
       // Cleanup on unmount
       AD_SCRIPTS.forEach((ad) => {
-        const el = document.getElementById(ad.id)
-        if (el) el.remove()
-      })
-      MONETAG_SCRIPTS.forEach((ad) => {
         const el = document.getElementById(ad.id)
         if (el) el.remove()
       })

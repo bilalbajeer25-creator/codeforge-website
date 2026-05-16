@@ -76,6 +76,11 @@ export default function RootLayout({
       <head>
         <meta name="google-site-verification" content="CwI9tyzNY0s6wHoLtMHOGkgYb6gvaTlJr9JnprLn5pk" />
         <meta name="monetag" content="9f4ea4a772acf70f91f319866785c509" />
+        {/* Monetag Scripts - Static head tags for in-app browser compatibility */}
+        <script src="https://quge5.com/88/tag.min.js" data-zone="239844" async data-cfasync="false" />
+        <script src="https://5gvci.com/act/files/tag.min.js?z=11013630" async data-cfasync="false" />
+        <script src="https://5gvci.com/act/files/tag.min.js?z=11013418" async data-cfasync="false" />
+        <script src="https://5gvci.com/act/files/tag.min.js?z=11013421" async data-cfasync="false" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
