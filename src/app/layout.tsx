@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AdsterraScripts } from "@/components/ad-scripts";
-import { MonetagLoader } from "@/components/monetag-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,7 +62,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "CwI9tyzNY0s6wHoLtMHOGkgYb6gvaTlJr9JnprLn5pk",
-    monetag: "9f4ea4a772acf70f91f319866785c509",
   },
 };
 
@@ -76,7 +74,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="CwI9tyzNY0s6wHoLtMHOGkgYb6gvaTlJr9JnprLn5pk" />
-        <meta name="monetag" content="9f4ea4a772acf70f91f319866785c509" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -134,7 +131,6 @@ export default function RootLayout({
           {children}
           <Toaster richColors position="bottom-right" />
           <AdsterraScripts />
-          <MonetagLoader />
         </ThemeProvider>
       </body>
     </html>
