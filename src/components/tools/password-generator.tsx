@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import type { PageName } from "@/components/site-header"
+import { AdBanner, InArticleAd } from "@/components/ad-components"
 
 interface PasswordGeneratorProps {
   onNavigate: (page: PageName) => void
@@ -180,6 +181,9 @@ export function PasswordGenerator({ onNavigate }: PasswordGeneratorProps) {
           Generate New Password
         </Button>
 
+        {/* Top Ad */}
+        <AdBanner format="horizontal" slot="password-top" />
+
         {/* SEO Content */}
         <div className="mt-12 prose prose-slate dark:prose-invert max-w-none">
           <h2 className="text-2xl font-bold text-foreground">Free Secure Password Generator</h2>
@@ -208,12 +212,18 @@ export function PasswordGenerator({ onNavigate }: PasswordGeneratorProps) {
             <li>Click the copy icon to copy the password to your clipboard.</li>
           </ol>
 
+          {/* In-Article Ad */}
+          <InArticleAd slot="password-mid" />
+
           <h3 className="text-xl font-semibold text-foreground mt-8">Related Tools</h3>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button variant="outline" size="sm" onClick={() => onNavigate("json-formatter")}>JSON Formatter</Button>
             <Button variant="outline" size="sm" onClick={() => onNavigate("color-picker")}>Color Picker</Button>
           </div>
         </div>
+
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="password-bottom" />
       </div>
     </div>
   )

@@ -3,16 +3,13 @@
 import * as React from "react"
 
 // ============================================================
-// AD LOADER - Adsterra Only
+// AD LOADER - Adsterra Background Ads
 // ============================================================
-//
-// Strategy:
-// 1. Adsterra Banner/Native → iframe with srcDoc (ALWAYS works)
-// 2. Adsterra Popunder/Social Bar/Smartlink → document.createElement
-//
+// Loads Popunder, Social Bar, and Smartlink ads
+// These are non-display ads that run in the background
+// Using direct script injection for maximum compatibility
 // ============================================================
 
-// Adsterra background ads (Popunder, Social Bar, Smartlink)
 const ADSTERRA_BG_ADS = [
   {
     id: "adsterra-popunder",
@@ -30,36 +27,60 @@ const ADSTERRA_BG_ADS = [
 
 export function AdsterraScripts() {
   React.useEffect(() => {
-    // Load Adsterra background ads via document.createElement
-    ADSTERRA_BG_ADS.forEach((ad) => {
-      if (document.getElementById(ad.id)) return
+    // Wait for page to fully load before injecting ad scripts
+    const loadAds = () => {
+      ADSTERRA_BG_ADS.forEach((ad, index) => {
+        // Skip if already loaded
+        if (document.getElementById(ad.id)) return
 
-      const container = document.createElement("div")
-      container.id = ad.id
-      container.style.display = "none"
-      document.body.appendChild(container)
+        // Create container
+        const container = document.createElement("div")
+        container.id = ad.id
+        container.style.cssText = "position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;"
+        document.body.appendChild(container)
 
-      const optionsScript = document.createElement("script")
-      optionsScript.type = "text/javascript"
-      optionsScript.textContent = `
-        atOptions = {
-          'key': '${ad.key}',
-          'format': 'iframe',
-          'height': 0,
-          'width': 0,
-          'params': {}
-        };
-      `
-      container.appendChild(optionsScript)
+        // Create atOptions script
+        const optionsScript = document.createElement("script")
+        optionsScript.type = "text/javascript"
+        optionsScript.textContent = `
+          atOptions = {
+            'key': '${ad.key}',
+            'format': 'iframe',
+            'height': 0,
+            'width': 0,
+            'params': {}
+          };
+        `
+        container.appendChild(optionsScript)
 
-      const invokeScript = document.createElement("script")
-      invokeScript.type = "text/javascript"
-      invokeScript.src = `https://www.highperformanceformat.com/${ad.key}/invoke.js`
-      invokeScript.async = true
-      container.appendChild(invokeScript)
-    })
+        // Create invoke script
+        const invokeScript = document.createElement("script")
+        invokeScript.type = "text/javascript"
+        invokeScript.src = `https://www.highperformanceformat.com/${ad.key}/invoke.js`
+        invokeScript.async = true
+        invokeScript.onerror = () => {
+          console.warn(`Adsterra ad ${ad.id} failed to load, retrying...`)
+          // Retry once after 5 seconds
+          setTimeout(() => {
+            const existingContainer = document.getElementById(ad.id)
+            if (existingContainer) {
+              const retryScript = document.createElement("script")
+              retryScript.type = "text/javascript"
+              retryScript.src = `https://www.highperformanceformat.com/${ad.key}/invoke.js`
+              retryScript.async = true
+              existingContainer.appendChild(retryScript)
+            }
+          }, 5000)
+        }
+        container.appendChild(invokeScript)
+      })
+    }
+
+    // Load ads after a small delay to not block initial page render
+    const timer = setTimeout(loadAds, 2000)
 
     return () => {
+      clearTimeout(timer)
       ADSTERRA_BG_ADS.forEach((ad) => {
         const el = document.getElementById(ad.id)
         if (el) el.remove()

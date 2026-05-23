@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import type { PageName } from "@/components/site-header"
+import { AdBanner, InArticleAd, SidebarAd } from "@/components/ad-components"
 
 interface CssGradientGeneratorProps {
   onNavigate: (page: PageName) => void
@@ -190,8 +191,8 @@ export function CssGradientGenerator({ onNavigate }: CssGradientGeneratorProps) 
               Random Gradient
             </Button>
 
-            {/* Ad Placeholder */}
-            {/* ADSENSE AD: CSS Gradient Generator sidebar */}
+            {/* Sidebar Ad */}
+            <SidebarAd slot="gradient-sidebar" />
           </div>
         </div>
 
@@ -218,6 +219,9 @@ export function CssGradientGenerator({ onNavigate }: CssGradientGeneratorProps) 
             </div>
           </CardContent>
         </Card>
+
+        {/* Top Ad */}
+        <AdBanner format="horizontal" slot="gradient-top" />
 
         {/* SEO Content */}
         <div className="mt-12 prose prose-slate dark:prose-invert max-w-none">
@@ -247,12 +251,18 @@ export function CssGradientGenerator({ onNavigate }: CssGradientGeneratorProps) 
             <li>Use presets for quick inspiration or the random button for surprises.</li>
           </ol>
 
+          {/* In-Article Ad */}
+          <InArticleAd slot="gradient-mid" />
+
           <h3 className="text-xl font-semibold text-foreground mt-8">Related Tools</h3>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button variant="outline" size="sm" onClick={() => onNavigate("color-picker")}>Color Picker</Button>
             <Button variant="outline" size="sm" onClick={() => onNavigate("image-compressor")}>Image Compressor</Button>
           </div>
         </div>
+
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="gradient-bottom" />
       </div>
     </div>
   )

@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import type { PageName } from "@/components/site-header"
+import { AdBanner, InArticleAd, SidebarAd } from "@/components/ad-components"
 
 interface ColorPickerProps {
   onNavigate: (page: PageName) => void
@@ -230,10 +231,13 @@ export function ColorPicker({ onNavigate }: ColorPickerProps) {
               </Card>
             )}
 
-            {/* Ad Placeholder */}
-            {/* ADSENSE AD: Color Picker sidebar */}
+            {/* Sidebar Ad */}
+            <SidebarAd slot="color-sidebar" />
           </div>
         </div>
+
+        {/* Top Ad */}
+        <AdBanner format="horizontal" slot="color-top" />
 
         {/* SEO Content */}
         <div className="mt-12 prose prose-slate dark:prose-invert max-w-none">
@@ -263,12 +267,18 @@ export function ColorPicker({ onNavigate }: ColorPickerProps) {
             <li>Your recently used colors are saved for quick access.</li>
           </ol>
 
+          {/* In-Article Ad */}
+          <InArticleAd slot="color-mid" />
+
           <h3 className="text-xl font-semibold text-foreground mt-8">Related Tools</h3>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button variant="outline" size="sm" onClick={() => onNavigate("css-gradient-generator")}>CSS Gradient Generator</Button>
             <Button variant="outline" size="sm" onClick={() => onNavigate("image-compressor")}>Image Compressor</Button>
           </div>
         </div>
+
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="color-bottom" />
       </div>
     </div>
   )

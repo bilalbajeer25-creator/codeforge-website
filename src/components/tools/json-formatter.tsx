@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import type { PageName } from "@/components/site-header"
+import { AdBanner, InArticleAd } from "@/components/ad-components"
 
 interface JsonFormatterProps {
   onNavigate: (page: PageName) => void
@@ -179,6 +180,9 @@ export function JsonFormatter({ onNavigate }: JsonFormatterProps) {
           </Button>
         </div>
 
+        {/* Top Ad */}
+        <AdBanner format="horizontal" slot="json-top" />
+
         {/* SEO Content */}
         <div className="mt-12 prose prose-slate dark:prose-invert max-w-none">
           <h2 className="text-2xl font-bold text-foreground">Free Online JSON Formatter and Validator</h2>
@@ -207,12 +211,18 @@ export function JsonFormatter({ onNavigate }: JsonFormatterProps) {
             <li>If there are errors, they&apos;ll be displayed below the input area.</li>
           </ol>
 
+          {/* In-Article Ad */}
+          <InArticleAd slot="json-mid" />
+
           <h3 className="text-xl font-semibold text-foreground mt-8">Related Tools</h3>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button variant="outline" size="sm" onClick={() => onNavigate("word-counter")}>Word Counter</Button>
             <Button variant="outline" size="sm" onClick={() => onNavigate("css-gradient-generator")}>CSS Gradient Generator</Button>
           </div>
         </div>
+
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="json-bottom" />
       </div>
     </div>
   )

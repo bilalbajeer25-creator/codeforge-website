@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import type { PageName } from "@/components/site-header"
+import { AdBanner, InArticleAd } from "@/components/ad-components"
 
 interface WordCounterProps {
   onNavigate: (page: PageName) => void
@@ -106,6 +107,9 @@ export function WordCounter({ onNavigate }: WordCounterProps) {
           </CardContent>
         </Card>
 
+        {/* Top Ad */}
+        <AdBanner format="horizontal" slot="word-top" />
+
         {/* SEO Content */}
         <div className="mt-12 prose prose-slate dark:prose-invert max-w-none">
           <h2 className="text-2xl font-bold text-foreground">Free Online Word Counter Tool</h2>
@@ -133,12 +137,18 @@ export function WordCounter({ onNavigate }: WordCounterProps) {
             <li>Use the Clear button to reset and start over.</li>
           </ol>
 
+          {/* In-Article Ad */}
+          <InArticleAd slot="word-mid" />
+
           <h3 className="text-xl font-semibold text-foreground mt-8">Related Tools</h3>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button variant="outline" size="sm" onClick={() => onNavigate("json-formatter")}>JSON Formatter</Button>
             <Button variant="outline" size="sm" onClick={() => onNavigate("password-generator")}>Password Generator</Button>
           </div>
         </div>
+
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="word-bottom" />
       </div>
     </div>
   )

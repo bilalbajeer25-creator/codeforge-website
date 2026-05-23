@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import type { PageName } from "@/components/site-header"
+import { AdBanner, InArticleAd, SidebarAd } from "@/components/ad-components"
 
 interface ImageCompressorProps {
   onNavigate: (page: PageName) => void
@@ -249,10 +250,13 @@ export function ImageCompressor({ onNavigate }: ImageCompressorProps) {
               </CardContent>
             </Card>
 
-            {/* Ad Placeholder */}
-            {/* ADSENSE AD: Image Compressor sidebar */}
+            {/* Sidebar Ad */}
+            <SidebarAd slot="image-sidebar" />
           </div>
         </div>
+
+        {/* Top Ad */}
+        <AdBanner format="horizontal" slot="image-top" />
 
         {/* SEO Content */}
         <div className="mt-12 prose prose-slate dark:prose-invert max-w-none">
@@ -282,12 +286,18 @@ export function ImageCompressor({ onNavigate }: ImageCompressorProps) {
             <li>Click &quot;Download&quot; to save the compressed image.</li>
           </ol>
 
+          {/* In-Article Ad */}
+          <InArticleAd slot="image-mid" />
+
           <h3 className="text-xl font-semibold text-foreground mt-8">Related Tools</h3>
           <div className="flex flex-wrap gap-2 mt-3">
             <Button variant="outline" size="sm" onClick={() => onNavigate("color-picker")}>Color Picker</Button>
             <Button variant="outline" size="sm" onClick={() => onNavigate("css-gradient-generator")}>CSS Gradient Generator</Button>
           </div>
         </div>
+
+        {/* Bottom Ad */}
+        <AdBanner format="horizontal" slot="image-bottom" />
       </div>
     </div>
   )
